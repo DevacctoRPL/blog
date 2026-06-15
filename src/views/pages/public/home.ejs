@@ -111,7 +111,7 @@
                             <% posts.slice(1, 5).forEach((post, idx) => { %>
                                 <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" style="text-decoration: none; color: inherit; padding: <%= idx > 0 ? '1.25rem 0' : '0' %>; border-top: <%= idx > 0 ? '1px solid var(--border-color)' : 'none' %>;">
                                     <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                                        <span style="font-size: 1.5rem; font-weight: 800; color: #0069ff; opacity: 0.3; min-width: 30px;">0<%= idx + 1 %></span>
+                                        <span style="font-size: 1.5rem; font-weight: 800; color: #061756; opacity: 0.6; min-width: 30px;">0<%= idx + 1 %></span>
                                         <div style="flex: 1;">
                                             <h4 style="font-family: var(--font-heading); font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);"><%= post.title %></h4>
                                             <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-muted);">
