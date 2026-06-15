@@ -102,32 +102,75 @@ var sliceBg = 'linear-gradient(180deg, rgba('+rgb+',0.08) 0%, rgba('+rgb+',0.03)
 
             <div class="sidebar-widget">
                 <h4>Jelajahi Kategori</h4>
-                <div class="sidebar-cat-tags">
-                    <% if (categories && categories.length > 0) { %>
-                        <% categories.slice(0, 5).forEach(cat => { %>
-                            <a href="<%= BASE_PATH %>/posts/category/<%= cat.slug %>" class="cat-badge" style="background-color: <%= catColor(cat.name) %>; color: #fff !important;"><%= cat.name %></a>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-top: 1rem;">
+                    <% 
+                        var currentCatId = post.Category ? post.Category.id : null;
+                        var displayCats = [];
+                        if (post.Category) {
+                            displayCats.push(post.Category);
+                        }
+                        if (categories && categories.length > 0) {
+                            categories.forEach(cat => {
+                                if (!currentCatId || cat.id !== currentCatId) {
+                                    displayCats.push(cat);
+                                }
+                            });
+                        }
+                        displayCats = displayCats.slice(0, 4);
+                    %>
+                    <% if (displayCats.length > 0) { %>
+                        <% displayCats.forEach(cat => { %>
+                            <% 
+                                var isCurrent = (currentCatId && cat.id === currentCatId);
+                                var badgeBg = isCurrent ? '#94a3b8' : catColor(cat.name);
+                            %>
+                            <a href="<%= BASE_PATH %>/posts/category/<%= cat.slug %>" class="cat-badge" style="background-color: <%= badgeBg %>; color: #fff !important; padding: 8px 18px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; text-align: center; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.08);" onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.08)'"><%= cat.name %></a>
                         <% }) %>
                     <% } else { %>
-                        <p style="color: var(--text-muted); font-size: 0.95rem;">Belum ada kategori.</p>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Belum ada kategori.</p>
                     <% } %>
                 </div>
             </div>
 
-            <% if (relatedPosts && relatedPosts.length > 0) { %>
-            <div class="sidebar-widget">
-                <h4>Artikel Terkait</h4>
-                <ul class="related-articles">
-                    <% relatedPosts.forEach(rel => { %>
-                        <li class="related-item">
-                            <a href="<%= BASE_PATH %>/posts/<%= rel.slug %>"><%= rel.title %></a>
-                            <span><%= new Date(rel.createdAt).toLocaleDateString() %></span>
-                        </li>
-                    <% }) %>
-                </ul>
-            </div>
-            <% } %>
         </aside>
     </div>
+
+    <% if (relatedPosts && relatedPosts.length > 0) { %>
+        <section class="related-posts-section" style="margin-top: 5rem; padding-top: 3rem; border-top: 1.5px dashed #e2e8f0; width: 100%; margin-bottom: 2rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 850; margin-bottom: 2rem; color: var(--text-main); letter-spacing: -0.02em;">Postingan Relevan</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+                <% relatedPosts.slice(0, 3).forEach(rel => { %>
+                    <article class="post-card-latest" style="background: white; border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; height: 100%; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.02);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.02)'">
+                        <a href="<%= BASE_PATH %>/posts/<%= rel.slug %>" style="display: block; width: 100%; aspect-ratio: 16/10; overflow: hidden; border-bottom: 1px solid #edf2f7; background: linear-gradient(135deg, #f0f4ff 0%, #dbeafe 100%);">
+                            <img src="https://placehold.co/800x500" alt="<%= rel.title %>" style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+                            <% if (rel.Category) { %>
+                                <span style="background-color: <%= catColor(rel.Category.name) %>15; color: <%= catColor(rel.Category.name) %>; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; width: max-content; margin-bottom: 1rem; display: inline-block;"><%= rel.Category.name %></span>
+                            <% } %>
+                            <h4 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; line-height: 1.35; margin: 0 0 0.75rem;">
+                                <a href="<%= BASE_PATH %>/posts/<%= rel.slug %>" style="color: var(--text-main); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#0069ff'" onmouseout="this.style.color='var(--text-main)'"><%= rel.title %></a>
+                            </h4>
+                            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                <span><%= rel.User ? rel.User.username : 'Admin' %></span>
+                                <span style="opacity: 0.5;">•</span>
+                                <span><%= new Date(rel.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1.25rem; flex: 1;">
+                                <%= rel.content.replace(/[#*`]/g, '').substring(0, 120) %>...
+                            </p>
+                            <a href="<%= BASE_PATH %>/posts/<%= rel.slug %>" class="read-more-link" style="color: var(--text-main); font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; width: max-content;" onmouseover="this.style.color='#0069ff'; this.querySelector('svg').style.transform='translateX(4px)';" onmouseout="this.style.color='var(--text-main)'; this.querySelector('svg').style.transform='translateX(0)';">
+                                Read more
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s;">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+    <% } %>
 </div>
 
 <script>

@@ -155,16 +155,19 @@
                             <% if (post.Category) { %>
                                 <span style="background-color: <%= catColor(post.Category.name) %>15; color: <%= catColor(post.Category.name) %>; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; width: max-content; margin-bottom: 1rem; display: inline-block;"><%= post.Category.name %></span>
                             <% } %>
-                            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; line-height: 1.35; margin: 0 0 1rem; flex: 1;">
+                            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; line-height: 1.35; margin: 0 0 0.75rem;">
                                 <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" style="color: var(--text-main); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#0069ff'" onmouseout="this.style.color='var(--text-main)'"><%= post.title %></a>
                             </h3>
-                            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
                                 <span><%= post.User ? post.User.username : 'Admin' %></span>
                                 <span style="opacity: 0.5;">•</span>
                                 <span><%= new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
                                 <span style="opacity: 0.5;">•</span>
                                 <span><%= Math.ceil((post.content || "").split(/\s+/).length / 200) %> min read</span>
                             </div>
+                            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1.25rem; flex: 1;">
+                                <%= post.content.replace(/[#*`]/g, '').substring(0, 120) %>...
+                            </p>
                             <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" class="read-more-link" style="color: var(--text-main); font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; width: max-content;" onmouseover="this.style.color='#0069ff'; this.querySelector('svg').style.transform='translateX(4px)';" onmouseout="this.style.color='var(--text-main)'; this.querySelector('svg').style.transform='translateX(0)';">
                                 Read more
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s;">
@@ -222,16 +225,19 @@
                                 <% if (post.Category) { %>
                                     <span style="background-color: <%= catColor(post.Category.name) %>15; color: <%= catColor(post.Category.name) %>; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; width: max-content; margin-bottom: 1rem; display: inline-block;"><%= post.Category.name %></span>
                                 <% } %>
-                                <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; line-height: 1.35; margin: 0 0 1rem; flex: 1;">
+                                <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; line-height: 1.35; margin: 0 0 0.75rem;">
                                     <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" style="color: var(--text-main); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#0069ff'" onmouseout="this.style.color='var(--text-main)'"><%= post.title %></a>
                                 </h3>
-                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
                                     <span><%= post.User ? post.User.username : 'Admin' %></span>
                                     <span style="opacity: 0.5;">•</span>
                                     <span><%= new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
                                     <span style="opacity: 0.5;">•</span>
                                     <span><%= Math.ceil((post.content || "").split(/\s+/).length / 200) %> min read</span>
                                 </div>
+                                <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; margin: 0 0 1.25rem; flex: 1;">
+                                    <%= post.content.replace(/[#*`]/g, '').substring(0, 120) %>...
+                                </p>
                                 <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" class="read-more-link" style="color: var(--text-main); font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; width: max-content;" onmouseover="this.style.color='#0069ff'; this.querySelector('svg').style.transform='translateX(4px)';" onmouseout="this.style.color='var(--text-main)'; this.querySelector('svg').style.transform='translateX(0)';">
                                     Read more
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s;">
