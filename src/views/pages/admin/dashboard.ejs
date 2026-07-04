@@ -261,7 +261,7 @@
                             <td style="padding: 18px 24px;"><span style="background: #f1f4f8; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; color: var(--primary-color); font-weight: 700;">${p.Category ? p.Category.name : '-'}</span></td>
                             <td style="padding: 18px 24px; color: var(--text-muted); font-size: 0.85rem;">${date}</td>
                             <td style="padding: 18px 24px; text-align: right;">
-                                <button onclick='prepareEdit("${p.slug}")' style="padding: 6px 14px; background: white; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">Edit</button>
+                                <button onclick='prepareEdit("${p.id}")' style="padding: 6px 14px; background: white; color: var(--primary-color); border: 1px solid var(--primary-color); border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">Edit</button>
                                 <button onclick="deletePost(${p.id})" style="padding: 6px 14px; background: white; color: #e74c3c; border: 1px solid #e74c3c; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; margin-left: 8px; transition: all 0.2s;">Hapus</button>
                             </td>
                         </tr>
@@ -271,9 +271,9 @@
         }
 
         let editingPostId = null;
-        async function prepareEdit(slug) {
+        async function prepareEdit(id) {
             try {
-                const res = await fetch(`<%= BASE_PATH %>/posts/${slug}`, { headers: { 'Accept': 'application/json' } });
+                const res = await fetch(`<%= BASE_PATH %>/api/posts/${id}`, { headers: { 'Accept': 'application/json' } });
                 const post = await res.json();
                 editingPostId = post.id;
                 document.getElementById('post-title').value = post.title;
