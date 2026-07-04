@@ -1,0 +1,44 @@
+import crypto from "crypto";
+
+const SESSION_COOKIE = "session_id";
+const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+const sessions = new Map();
+
+export const sessionMiddleware = (req, res, next) => {
+  const sessionId = req.cookies[SESSION_COOKIE];
+  if (sessionId && sessions.has(sessionId)) {
+    const session = sessions.get(sessionId);
+    if (Date.now() - session.createdAt < SESSION_TTL_MS) req.internalUserId = session.userId
+    else {
+      sessions.delete(sessionId)
+      return res.redirect("/blog/login")
+    };
+    next()
+  } else{
+    return res.status(401).send("")
+  }
+};
+
+export const createSession = (userId) => {
+  const sessionId = crypto.randomUUID();
+  sessions.set(sessionId, { userId, createdAt: Date.now() });
+  return sessionId;
+};
+
+export const destroySession = (sessionId) => {
+  sessions.delete(sessionId);
+};
+
+export const regenerateSession = (sessionId) => {
+  if (!sessions.has(sessionId)) return null;
+  const data = sessions.get(sessionId);
+  sessions.delete(sessionId);
+  const newSessionId = crypto.randomUUID();
+  sessions.set(newSessionId, data);
+  return newSessionId;
+};
+
+export const clearAllSessions = () => sessions.clear();
+
+export const getSession = (sessionId) => sessions.get(sessionId) || null;
