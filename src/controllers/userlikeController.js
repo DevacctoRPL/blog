@@ -52,11 +52,11 @@ export const getTrending = async (req, res) => {
     const trending = await UserLike.findAll({
       attributes: [
         "PostId",
-        [db.sequelize.fn("COUNT", db.sequelize.col("PostId")), "likeCount"]
+        [db.sequelize.fn("COUNT", db.sequelize.col("PostId")), "likecount"]
       ],
       include: [{ model: Post, attributes: ["id", "title", "slug"] }],
       group: ["PostId", "Post.id"],
-      order: [[db.sequelize.literal("likeCount"), "DESC"]],
+      order: [[db.sequelize.literal("likecount"), "DESC"]],
       limit: parseInt(limit)
     });
 
@@ -64,7 +64,7 @@ export const getTrending = async (req, res) => {
       postId: item.PostId,
       title: item.Post.title,
       slug: item.Post.slug,
-      likes: parseInt(item.dataValues.likeCount)
+      likes: parseInt(item.dataValues.likecount)
     }));
 
     res.json(result);
