@@ -108,29 +108,33 @@
                     </div>
                 </div>
 
-                <% if (posts && posts.length > 1) { %>
-                    <div class="hero-item-trending trending-posts-widget" style="background: #f8fafc; border-radius: 24px; padding: 2rem 1.5rem; box-shadow: none;">
-                        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Postingan Trending</h3>
-                        <div style="display: flex; flex-direction: column;">
-                            <% posts.slice(1, 5).forEach((post, idx) => { %>
-                                <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" style="text-decoration: none; color: inherit; padding: <%= idx > 0 ? '1.25rem 0' : '0' %>; border-top: <%= idx > 0 ? '1px solid var(--border-color)' : 'none' %>;">
-                                    <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                                        <span style="font-size: 1.5rem; font-weight: 800; color: #061756; opacity: 0.6; min-width: 30px;">0<%= idx + 1 %></span>
-                                        <div style="flex: 1;">
-                                            <h4 style="font-family: var(--font-heading); font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);"><%= post.title %></h4>
-                                            <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-muted);">
-                                                <% if (post.Category) { %>
-                                                    <span style="color: <%= catColor(post.Category.name) %>; font-weight: 600;"><%= post.Category.name %></span>
-                                                <% } %>
-                                                <span><%= new Date(post.createdAt).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }) %></span>
-                                            </div>
+                <div class="hero-item-trending trending-posts-widget" style="background: #f8fafc; border-radius: 24px; padding: 2rem 1.5rem; box-shadow: none;" x-data="{ posts: [], loading: true }" x-init="fetch('<%= BASE_PATH %>/api/likes/trending?limit=5').then(r=>r.json()).then(d=>{ posts=d; loading=false }).catch(()=>{ loading=false })">
+                    <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Postingan Trending <span style="font-size:0.75rem; font-weight:400; color:var(--text-muted);">(by likes)</span></h3>
+                    <div style="display: flex; flex-direction: column;">
+                        <template x-if="loading">
+                            <p style="color:var(--text-muted); font-size:0.9rem;">Memuat...</p>
+                        </template>
+                        <template x-if="!loading && posts.length === 0">
+                            <p style="color:var(--text-muted); font-size:0.9rem;">Belum ada postingan trending.</p>
+                        </template>
+                        <template x-for="(post, idx) in posts" :key="post.postId">
+                            <a :href="'<%= BASE_PATH %>/posts/' + post.slug" style="text-decoration: none; color: inherit; display: block;" :style="idx > 0 ? 'padding: 1.25rem 0; border-top: 1px solid var(--border-color);' : ''">
+                                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                    <span style="font-size: 1.5rem; font-weight: 800; color: #061756; opacity: 0.6; min-width: 30px;" x-text="'0' + (idx + 1)"></span>
+                                    <div style="flex: 1;">
+                                        <h4 style="font-family: var(--font-heading); font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; color: var(--text-main);" x-text="post.title"></h4>
+                                        <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+                                            <span style="display: inline-flex; align-items: center; gap: 3px;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                                <span x-text="post.likes"></span>
+                                            </span>
                                         </div>
                                     </div>
-                                </a>
-                            <% }) %>
-                        </div>
+                                </div>
+                            </a>
+                        </template>
                     </div>
-                <% } %>
+                </div>
             </div>
         </div>
     <% } %>
