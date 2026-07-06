@@ -15,8 +15,8 @@ export const sessionMiddleware = (req, res, next) => {
       return res.redirect("/blog/login")
     };
     next()
-  } else{
-    return res.status(401).send("")
+  } else {
+    return res.redirect("/blog/login");
   }
 };
 

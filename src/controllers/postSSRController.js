@@ -124,12 +124,12 @@ export const searchPosts = async (req, res) => {
             order: [["createdAt", "DESC"]],
         });
         const categories = await Category.findAll();
-        res.render("pages/public/home", { 
-            posts, 
-            categories, 
-            isLandingPage: false, 
-            q: query, 
-            title: `Hasil Pencarian: ${query}` 
+        res.render("pages/public/home", {
+            posts,
+            categories,
+            isLandingPage: false,
+            q: query,
+            title: `Hasil Pencarian: ${query}`
         });
     } catch (err) {
         res.status(500).render("pages/public/404");
@@ -147,11 +147,11 @@ export const getPostsByCategory = async (req, res) => {
             order: [['createdAt', 'DESC']]
         });
         const categories = await Category.findAll();
-        res.render("pages/public/home", { 
-            posts, 
-            categories, 
-            isLandingPage: false, 
-            title: `Kategori: ${category.name}` 
+        res.render("pages/public/home", {
+            posts,
+            categories,
+            isLandingPage: false,
+            title: `Kategori: ${category.name}`
         });
     } catch (err) {
         res.status(500).render("pages/public/404");

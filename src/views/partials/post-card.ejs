@@ -4,8 +4,15 @@ var _excerpt = (post.content || '').replace(/[#*`]/g, '').substring(0, 120);
 %>
 <article class="post-card-latest">
     <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" class="post-card-thumb" aria-label="<%= post.title %>">
-        <% if (post.thumbnail) { %>
-            <img src="<%= post.thumbnail %>" alt="<%= post.title %>">
+        <% 
+            var thumbUrl = post.thumbnail || post.pathID;
+            if (thumbUrl) { 
+                // Jika absolute path (misal local upload 'storage/...'), append BASE_PATH
+                if (!thumbUrl.startsWith('http') && !thumbUrl.startsWith('/')) {
+                    thumbUrl = BASE_PATH + '/' + thumbUrl;
+                }
+        %>
+            <img src="<%= thumbUrl %>" alt="<%= post.title %>">
         <% } else { %>
             <div class="post-card-thumb-placeholder"></div>
         <% } %>

@@ -2,14 +2,12 @@
 
     <section class="hero-slice<%= isLandingPage ? '' : ' hero-slice--compact' %>">
         <% if (isLandingPage) { %>
-            <div class="hero-split-container">
-                <div class="container hero-split-inner">
-                    <div class="hero-left-content">
-                        <span class="hero-badge">Divisi RPL SMK Pelita Nusantara</span>
-                        <h1 class="hero-split-title">Insight &amp; Update Rekayasa Perangkat Lunak</h1>
-                        <p class="hero-split-sub">Temukan artikel berkualitas tinggi, tutorial coding, sains, dan
-                            perkembangan teknologi terbaru langsung dari pengembang.</p>
-                        <form class="hero-search-form" action="<%= BASE_PATH %>/search" method="GET">
+            <div class="hero-split-container" style="justify-content: center; text-align: center; padding: 6rem 0;">
+                <div class="container hero-split-inner" style="display: flex; justify-content: center; align-items: center; width: 100%; max-width: 800px;">
+                    <div class="hero-left-content" style="width: 100%; max-width: 600px; margin: 0 auto; text-align: center;">
+                        <h1 class="hero-split-title" style="font-size: 2.8rem; line-height: 1.2; margin-bottom: 1rem;">Insight &amp; Update Rekayasa Perangkat Lunak</h1>
+                        <p class="hero-split-sub" style="margin: 0 auto 2rem; max-width: 500px;">Temukan artikel berkualitas tinggi, tutorial coding, sains, dan perkembangan teknologi terbaru langsung dari pengembang.</p>
+                        <form class="hero-search-form" action="<%= BASE_PATH %>/search" method="GET" style="margin: 0 auto; max-width: 550px;">
                             <svg class="hero-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <circle cx="11" cy="11" r="8" />
@@ -19,30 +17,6 @@
                                 placeholder="Cari topik, tutorial, atau bahasa pemrograman..." autocomplete="off">
                             <button type="submit">Cari</button>
                         </form>
-                    </div>
-                    <div class="hero-right-visual">
-                        <div class="tech-card-glow"></div>
-                        <div class="tech-canvas">
-                            <div class="floating-code-line">const rpl = new SoftwareEngineer();</div>
-                            <div class="tech-circle tech-circle-large"></div>
-                            <div class="tech-circle tech-circle-mid"></div>
-                            <div class="tech-circle tech-circle-small"></div>
-                            <div class="tech-dots"></div>
-                            <div class="tech-terminal">
-                                <div class="terminal-header">
-                                    <span class="dot red"></span>
-                                    <span class="dot yellow"></span>
-                                    <span class="dot green"></span>
-                                    <span class="terminal-title">bash - rpl@devtrine</span>
-                                </div>
-                                <div class="terminal-body">
-                                    <p class="cmd"><span class="prompt">$</span> npm run dev</p>
-                                    <p class="out">Server running on port 5000</p>
-                                    <p class="out success">✓ Build completed successfully!</p>
-                                    <p class="cmd"><span class="prompt">$</span> <span class="cursor">_</span></p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -75,25 +49,29 @@
                     </div>
                 </div>
                 <% } %>
+    </section>
 
-                    <% if (isLandingPage) { %>
-                        <div class="container landing-divider">
-                            <hr class="dashed-rule">
-                        </div>
+    <div style="width: 100%; border-top: 1.5px dashed #e2e8f0; margin: 0;"></div>
 
-                        <div class="container landing-hero-grid-wrap">
-                            <div class="hero-grid-layout">
+    <% if (isLandingPage) { %>
+        <div class="container landing-hero-grid-wrap" style="padding-top: 5rem; padding-bottom: 3rem;">
+            <div class="hero-grid-layout">
 
                                 <% if (posts && posts.length> 0) { %>
                                     <% var featuredPost=posts[0]; %>
                                         <article class="featured-post-card hero-item-featured">
                                             <div class="featured-post-thumb">
-                                                <% if (featuredPost.thumbnail) { %>
-                                                    <img src="<%= featuredPost.thumbnail %>"
-                                                        alt="<%= featuredPost.title %>">
-                                                    <% } else { %>
-                                                        <div class="featured-post-thumb-placeholder"></div>
-                                                        <% } %>
+                                                <% 
+                                                    var featThumbUrl = featuredPost.thumbnail || featuredPost.pathID;
+                                                    if (featThumbUrl) { 
+                                                        if (!featThumbUrl.startsWith('http') && !featThumbUrl.startsWith('/')) {
+                                                            featThumbUrl = BASE_PATH + '/' + featThumbUrl;
+                                                        }
+                                                %>
+                                                    <img src="<%= featThumbUrl %>" alt="<%= featuredPost.title %>">
+                                                <% } else { %>
+                                                    <div class="featured-post-thumb-placeholder"></div>
+                                                <% } %>
                                                             <% if (featuredPost.Category) { %>
                                                                 <span class="featured-post-cat"
                                                                     style="--cat-color: <%= catColor(featuredPost.Category.name) %>;">
@@ -159,11 +137,14 @@
                                                 </div>
                                             </div>
 
-                                            <% if (posts && posts.length> 1) { %>
+                                            <% 
+                                                var displayTrending = (typeof trendingPosts !== 'undefined' && trendingPosts.length > 0) ? trendingPosts : posts.slice(1, 5);
+                                                if (displayTrending && displayTrending.length > 0) { 
+                                            %>
                                                 <div class="hero-item-trending trending-posts-widget">
                                                     <h3 class="widget-title">Postingan Trending</h3>
                                                     <div class="trending-list">
-                                                        <% posts.slice(1, 5).forEach((post, idx)=> { %>
+                                                        <% displayTrending.forEach((post, idx)=> { %>
                                                             <a href="<%= BASE_PATH %>/posts/<%= post.slug %>"
                                                                 class="trending-item<%= idx > 0 ? ' trending-item--bordered' : '' %>">
                                                                 <span class="trending-rank">0<%= idx + 1 %></span>
@@ -191,16 +172,16 @@
                                                     </div>
                                                 </div>
                                                 <% } %>
+            </div>
+        </div>
+    <% } %>
 
-                            </div>
-                        </div>
-                        <% } %>
-    </section>
+    <div style="width: 100%; border-top: 1.5px dashed #e2e8f0; margin: 0;"></div>
 
-    <section class="latest-posts-slice<%= isLandingPage ? '' : ' latest-posts-slice--light' %>">
+    <section class="latest-posts-slice<%= isLandingPage ? '' : ' latest-posts-slice--light' %>" style="padding-top: 4rem;">
         <div class="container">
             <% if (!isLandingPage) { %>
-                <hr class="dashed-rule">
+                <div style="width: 100%; border-top: 1.5px dashed #e2e8f0; margin: 0 0 3.5rem;"></div>
                 <% } %>
                     <h2 class="section-title">
                         <%= isLandingPage ? 'Postingan Terbaru' : (typeof title !=='undefined' ? title
@@ -231,9 +212,9 @@
         }
         %>
         <% categoriesWithPosts.slice(0, 2).forEach(group=> { %>
-            <section class="category-highlight-slice">
+            <div style="width: 100%; border-top: 1.5px dashed #e2e8f0; margin: 0;"></div>
+            <section class="category-highlight-slice" style="padding-top: 4rem;">
                 <div class="container">
-                    <hr class="dashed-rule">
                     <div class="section-header">
                         <h2 class="section-title">
                             <%= group.category.name %>

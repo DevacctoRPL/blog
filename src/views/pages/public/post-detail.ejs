@@ -6,7 +6,7 @@ var color   = catColor(catName);
 var sliceBg = 'linear-gradient(180deg, color-mix(in srgb, ' + color + ' 8%, transparent) 0%, color-mix(in srgb, ' + color + ' 3%, transparent) 50%, #fff 100%)';
 %>
 
-<section class="hero-slice" style="background: <%= sliceBg %>;">
+<section class="hero-slice hero-slice--compact" style="background: <%= sliceBg %>;">
     <section class="hero-post">
         <div class="container">
             <% if (post.Category) { %>
@@ -217,7 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
         edgeBtn.classList.toggle('open');
     });
 
-    closeBtn?.addEventListener('click', closePanel);
+    fetch('<%= BASE_PATH %>/api/popularity/<%= post.id %>/view', { method: 'PATCH' })
+        .catch(err => console.error("Error logging view:", err));
 });
 </script>
 

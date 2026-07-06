@@ -29,7 +29,24 @@ router.get("/", async (req, res) => {
             order: [['createdAt', 'DESC']],
         });
         const categories = await Category.findAll();
-        res.render("pages/public/home", { posts, categories, isLandingPage: true, catColor });
+
+        const trendingLikes = await db.UserLike.findAll({
+            attributes: [
+                'PostId',
+                [db.Sequelize.fn('COUNT', db.Sequelize.col('PostId')), 'likecount']
+            ],
+            include: [{
+                model: Post,
+                include: [{ model: Category }, { model: User, attributes: ['username'] }]
+            }],
+            group: ['PostId', 'Post.id', 'Post->Category.id', 'Post->User.id'],
+            order: [[db.Sequelize.literal('likecount'), 'DESC']],
+            limit: 5
+        });
+
+        const trendingPosts = trendingLikes.map(tl => tl.Post).filter(Boolean);
+
+        res.render("pages/public/home", { posts, categories, trendingPosts, isLandingPage: true, catColor });
     } catch (err) {
         res.status(500).send("Error loading home page: " + err.message);
     }
@@ -54,23 +71,23 @@ router.get("/categories", async (req, res) => {
 
 router.get("/login", (req, res) => res.render("pages/auth/login"));
 router.post("/login", login);
-router.get("/admin",  sessionMiddleware, (req, res) => res.render("pages/admin/dashboard"));
+router.get("/admin", sessionMiddleware, (req, res) => res.render("pages/admin/dashboard"));
 router.get("/inspect", (req, res) => res.send(req.cookies))
 
 router.post("/logout", (req, res) => {
-  const sessionId = req.cookies.session_id;
-  if (sessionId) {
-    destroySession(sessionId);
-    res.clearCookie("session_id", { path: "/" });
-  }
-  res.redirect("/blog/login");
+    const sessionId = req.cookies.session_id;
+    if (sessionId) {
+        destroySession(sessionId);
+        res.clearCookie("session_id", { path: "/" });
+    }
+    res.redirect("/blog/login");
 });
 
 router.post("/admin/clear-sessions", sessionMiddleware, (req, res) => {
-  if (!req.internalUserId) return res.status(401).json({ error: "Unauthorized" });
-  clearAllSessions();
-  res.clearCookie("session_id", { path: "/" });
-  res.json({ message: "All sessions cleared" });
+    if (!req.internalUserId) return res.status(401).json({ error: "Unauthorized" });
+    clearAllSessions();
+    res.clearCookie("session_id", { path: "/" });
+    res.json({ message: "All sessions cleared" });
 });
 
 export default router;
