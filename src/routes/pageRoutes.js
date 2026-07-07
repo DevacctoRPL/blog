@@ -2,7 +2,7 @@ import express, { response } from "express";
 import db from "../../models/index.js";
 import { login } from "../controllers/userController.js";
 import * as postSSRController from "../controllers/postSSRController.js";
-import { sessionMiddleware, destroySession, clearAllSessions } from "../middleware/session.js"
+import { auth, destroySession, clearAllSessions } from "../middleware/session.js"
 
 const { Post, Category, User } = db;
 const router = express.Router();
@@ -71,7 +71,7 @@ router.get("/categories", async (req, res) => {
 
 router.get("/login", (req, res) => res.render("pages/auth/login"));
 router.post("/login", login);
-router.get("/admin", sessionMiddleware, (req, res) => res.render("pages/admin/dashboard"));
+router.get("/admin", auth('admin'), (req, res) => res.render("pages/admin/dashboard"));
 router.get("/inspect", (req, res) => res.send(req.cookies))
 
 router.post("/logout", (req, res) => {
@@ -83,8 +83,7 @@ router.post("/logout", (req, res) => {
     res.redirect("/blog/login");
 });
 
-router.post("/admin/clear-sessions", sessionMiddleware, (req, res) => {
-    if (!req.internalUserId) return res.status(401).json({ error: "Unauthorized" });
+router.post("/admin/clear-sessions", auth('admin'), (req, res) => {
     clearAllSessions();
     res.clearCookie("session_id", { path: "/" });
     res.json({ message: "All sessions cleared" });
