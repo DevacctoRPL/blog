@@ -1,46 +1,15 @@
 <%- include('../../partials/header', { title: 'Kategori - Blog' }) %>
-
-<section class="hero-post categories-hero">
-    <div class="container">
-        <h1 class="categories-hero-title">Kategori</h1>
-        <p class="categories-hero-sub">Telusuri artikel kami berdasarkan topik untuk menemukan insight yang paling relevan bagi Anda.</p>
-    </div>
-</section>
-
-<div class="container categories-bento-wrap">
-    <div class="bento-grid">
-        <% if (typeof categories !== 'undefined' && categories.length > 0) {
-            const gridPatterns = [
-                'span-w2-h2',
-                'span-w1-h3',
-                'span-w1-h1',
-                'span-w2-h1',
-                'span-w1-h2',
-                'span-w1-h1',
-                'span-w2-h1',
-                'span-w1-h2',
-                'span-w1-h1',
-                'span-w2-h2',
-                'span-w2-h1',
-                'span-w2-h2',
-                'span-w2-h1'
-            ];
-        %>
-            <% categories.forEach((cat, idx) => {
-                var pattern = gridPatterns[idx % gridPatterns.length];
-            %>
-                <a href="<%= BASE_PATH %>/posts/category/<%= cat.slug %>"
-                   class="bento-item <%= pattern %>"
-                   style="--cat-color: <%= catColor(cat.name) %>;">
-                    <div class="bento-content">
-                        <h3 class="bento-title"><%= cat.name %></h3>
-                    </div>
-                </a>
-            <% }) %>
-        <% } else { %>
-            <p class="posts-empty">Belum ada kategori.</p>
-        <% } %>
-    </div>
+<section class="retro-page-banner"><div class="container"><h1>Direktori Kategori</h1><p>Telusuri artikel berdasarkan topik seperti portal web klasik.</p></div></section>
+<div class="container retro-two-column">
+    <section class="retro-panel retro-full-span">
+        <h2 class="retro-panel-title">📚 Semua Kategori</h2>
+        <div class="retro-panel-body retro-directory-grid">
+            <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                <% categories.forEach((cat, idx) => { %>
+                    <a href="<%= BASE_PATH %>/posts/category/<%= cat.slug %>" class="retro-directory-item"><span class="retro-index"><%= String(idx + 1).padStart(2, '0') %></span><%= cat.name %></a>
+                <% }) %>
+            <% } else { %><p class="retro-empty">Belum ada kategori.</p><% } %>
+        </div>
+    </section>
 </div>
-
 <%- include('../../partials/footer') %>

@@ -1,54 +1,20 @@
 <%- include('../../partials/header', { title: 'Register - Blog' }) %>
-
-<div style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">Register</h2>
-    <div id="error-message" style="background: #e74c3c; color: white; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: none;"></div>
-
-    <form id="register-form">
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Username</label>
-            <input type="text" id="username" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+<div class="container retro-auth-wrap">
+    <section class="retro-panel retro-auth-panel">
+        <h2 class="retro-panel-title">📝 Register</h2>
+        <div class="retro-panel-body">
+            <div id="error-message" class="retro-alert" style="display: none;"></div>
+            <form id="register-form" class="retro-form">
+                <label>Username</label><input class="retro-input" type="text" id="username" required>
+                <label>Email</label><input class="retro-input" type="email" id="email" required>
+                <label>Password</label><input class="retro-input" type="password" id="password" required>
+                <button type="submit" class="retro-button retro-button-primary">Register</button>
+            </form>
+            <p class="retro-auth-note">Already have an account? <a href="<%= BASE_PATH %>/login">Login</a></p>
         </div>
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
-            <input type="email" id="email" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Password</label>
-            <input type="password" id="password" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
-        <button type="submit" style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1em;">Register</button>
-    </form>
-
-    <p style="text-align: center; margin-top: 15px; color: #666;">
-        Already have an account? <a href="<%= BASE_PATH %>/login" style="color: #3498db;">Login</a>
-    </p>
+    </section>
 </div>
-
 <script>
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        try {
-            const res = await fetch('<%= BASE_PATH %>/api/users/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
-            if (res.ok) {
-                window.location.href = '<%= BASE_PATH %>/login';
-            } else {
-                const data = await res.json();
-                const errDiv = document.getElementById('error-message');
-                errDiv.textContent = data.error || data.message || 'Registration failed';
-                errDiv.style.display = 'block';
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    });
+    document.getElementById('register-form').addEventListener('submit', async (e) => { e.preventDefault(); const username = document.getElementById('username').value; const email = document.getElementById('email').value; const password = document.getElementById('password').value; try { const res = await fetch('<%= BASE_PATH %>/api/users/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, email, password }) }); if (res.ok) window.location.href = '<%= BASE_PATH %>/login'; else { const data = await res.json(); const errDiv = document.getElementById('error-message'); errDiv.textContent = data.error || data.message || 'Registration failed'; errDiv.style.display = 'block'; } } catch (err) { console.error(err); } });
 </script>
-
 <%- include('../../partials/footer') %>

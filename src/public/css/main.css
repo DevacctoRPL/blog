@@ -2188,3 +2188,106 @@ footer {
         background: rgba(0, 105, 255, 0.05);
     }
 }
+/* Retro Web 2005 Blog Portal redesign */
+:root {
+    --primary: #3366CC;
+    --primary-light: #6699FF;
+    --primary-dark: #003399;
+    --secondary: #FFCC00;
+    --secondary-dark: #FF9900;
+    --background: #F0F0F0;
+    --panel: #FFFFFF;
+    --border: #C0C0C0;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --link: #0000EE;
+    --visited-link: #551A8B;
+    --primary-color: #3366CC;
+    --primary-hover: #003399;
+    --bg: #F0F0F0;
+    --bg-subtle: #E8EEF8;
+    --text-main: #000000;
+    --text-muted: #333333;
+    --card-radius: 3px;
+    --font-main: Verdana, Tahoma, Arial, sans-serif;
+    --font-heading: Verdana, Tahoma, Arial, sans-serif;
+}
+body.retro-body, body { font-family: Verdana, Tahoma, Arial, sans-serif !important; font-size: 12px; line-height: 1.42; background: #F0F0F0 url("data:image/gif;base64,R0lGODlhBAAEAIAAAPDw8OXl5SH5BAAAAAAALAAAAAAEAAQAAAIFhI+py1AAOw==") repeat; color: #000; }
+a { color: #0000EE; text-decoration: underline; }
+a:visited { color: #551A8B; }
+.container { max-width: 1180px; padding: 0 10px; }
+.retro-site-header { background: linear-gradient(to bottom,#ffffff 0%,#dbe8ff 44%,#9bbcf2 45%,#3366cc 100%); border-bottom: 1px solid #003399; box-shadow: inset 0 1px #fff, 0 2px 4px rgba(0,0,0,.25); padding: 6px 0; position: sticky; top: 0; z-index: 1000; }
+.retro-header-inner { display: flex; align-items: center; gap: 10px; }
+.retro-logo { display: flex; align-items: center; gap: 6px; color: #fff !important; font: bold 20px Verdana,Tahoma,sans-serif; text-decoration: none; text-shadow: 1px 1px #003399; }
+.retro-logo-img { width: 28px; height: 28px; border: 1px solid #fff; background: #fff; }
+.retro-top-nav { margin-left: auto; flex: 0 1 auto; }
+.retro-top-nav ul { display: flex; gap: 3px; list-style: none; }
+.retro-top-nav a { display: block; padding: 5px 10px; color: #fff !important; font-weight: bold; text-decoration: none; border: 1px solid rgba(255,255,255,.55); background: linear-gradient(to bottom,#6699ff,#3366cc); box-shadow: inset 1px 1px rgba(255,255,255,.45); }
+.retro-top-nav a:hover { background: linear-gradient(to bottom,#ffdf62,#ff9900); color:#000 !important; text-decoration: underline; }
+.retro-main { flex: 1; }
+.retro-page-banner { border-top: 1px solid #fff; border-bottom: 1px solid #9aa9c0; background: linear-gradient(to bottom,#fffbe3,#f7d86a); padding: 12px 0; margin-bottom: 10px; }
+.retro-page-banner h1 { font-size: 22px; margin: 0 0 4px; color: #003399; }
+.retro-page-banner p { margin: 0; color: #333; }
+.retro-portal-layout, .retro-article-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr) 240px; gap: 10px; align-items: start; }
+.retro-two-column, .retro-list-page, .retro-auth-wrap, .retro-error-wrap { padding-top: 14px; }
+.retro-panel { background: #fff; border: 1px solid #808080; box-shadow: 2px 2px 0 #d0d0d0, inset 1px 1px #fff; margin-bottom: 10px; }
+.retro-panel-title { margin: 0; padding: 5px 8px; color: #fff; font-size: 13px; font-weight: bold; background: linear-gradient(to bottom,#6699ff,#3366cc 48%,#003399); border-bottom: 1px solid #003399; text-shadow: 1px 1px #003399; }
+.retro-panel-body { padding: 8px; }
+.retro-sidebar, .retro-utility-column { min-width: 0; }
+.retro-link-list { list-style: none; margin: 0; padding: 0; }
+.retro-link-list li { padding: 4px 3px; border-bottom: 1px dotted #c0c0c0; }
+.retro-muted, .retro-post-meta { color: #555; font-size: 11px; }
+.retro-content-column { min-width: 0; }
+.retro-featured-body { display: grid; grid-template-columns: 190px 1fr; gap: 10px; }
+.retro-featured-img { width: 100%; max-height: 150px; object-fit: cover; border: 1px solid #808080; background: #eee; padding: 2px; }
+.retro-featured-post h2 { font-size: 18px; margin: 0 0 4px; }
+.retro-status-line { background: #eef3ff; border: 1px solid #b7c8e6; padding: 4px; margin: 0 0 8px; }
+.retro-post-list { display: grid; gap: 6px; }
+.retro-post-item { display: grid; grid-template-columns: 96px 1fr; gap: 8px; padding: 6px; border: 1px solid #c0c0c0; background: linear-gradient(to bottom,#fff,#f4f4f4); }
+.retro-post-thumb { display: flex; align-items: center; justify-content: center; width: 96px; height: 72px; border: 1px solid #808080; background: #e5e5e5; color: #555; font-size: 10px; text-decoration: none; overflow: hidden; }
+.retro-post-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.retro-post-copy h3 { font-size: 14px; margin: 0 0 3px; }
+.retro-post-excerpt { margin: 4px 0; color: #222; }
+.retro-readmore { font-size: 11px; font-weight: bold; }
+.retro-button, button.retro-button, .admin-wrapper button, .admin-wrapper [type="button"], .admin-wrapper [type="submit"] { display: inline-block; padding: 5px 10px !important; color: #000 !important; border: 1px solid #808080 !important; background: linear-gradient(to bottom,#fff,#dcdcdc) !important; border-radius: 2px !important; box-shadow: inset 1px 1px #fff, inset -1px -1px #aaa !important; font: bold 12px Verdana,Tahoma,Arial,sans-serif !important; cursor: pointer; text-decoration: none; }
+.retro-button:hover, .admin-wrapper button:hover { background: linear-gradient(to bottom,#fff7bf,#ffcc00) !important; }
+.retro-button-primary { background: linear-gradient(to bottom,#6699ff,#3366cc) !important; color: #fff !important; text-shadow: 1px 1px #003399; }
+.retro-input, .retro-form input, .retro-form select, .retro-form textarea, .admin-wrapper input, .admin-wrapper select, .admin-wrapper textarea { border: 1px solid #808080 !important; border-radius: 0 !important; background: #fff !important; padding: 5px !important; font: 12px Verdana,Tahoma,Arial,sans-serif !important; box-shadow: inset 1px 1px 2px #c0c0c0 !important; }
+.retro-search { display: flex; gap: 4px; }
+.retro-search input { min-width: 0; flex: 1; }
+.retro-rank-list { margin: 0 0 0 20px; padding: 0; }
+.retro-rank-list li { padding: 4px 0; border-bottom: 1px dotted #c0c0c0; }
+.retro-badge-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.retro-badge-list a, .retro-directory-item { padding: 4px 6px; border: 1px solid #9aa9c0; background: linear-gradient(to bottom,#fff,#e8eef8); text-decoration: none; }
+.retro-directory-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 6px; }
+.retro-index { color:#666; margin-right:6px; font-family:"Courier New",monospace; }
+.retro-auth-panel { max-width: 420px; margin: 28px auto; }
+.retro-form { display: grid; gap: 6px; }
+.retro-form label { font-weight: bold; }
+.retro-alert { background: #fff3cd; color: #6b4d00; border: 1px solid #cc9900; padding: 6px; margin-bottom: 8px; }
+.retro-auth-note { text-align: center; margin: 10px 0 0; }
+.retro-error-panel { max-width: 520px; margin: 30px auto; text-align: center; }
+.retro-error-code { font-size: 60px; line-height: 1; margin: 8px 0; color: #003399; font-weight: bold; }
+.retro-article-panel { min-width: 0; }
+.retro-markdown { font-size: 13px; line-height: 1.55; }
+.retro-markdown h1, .retro-markdown h2, .retro-markdown h3 { color: #003399; border-bottom: 1px solid #c0c0c0; padding-bottom: 3px; }
+.retro-markdown pre { border: 1px solid #808080; border-radius: 0; }
+.retro-footer { margin-top: 20px; padding: 8px 0; color: #000; background: linear-gradient(to bottom,#dcdcdc,#bfbfbf); border-top: 1px solid #808080; box-shadow: inset 0 1px #fff; font-size: 11px; }
+.retro-footer-inner { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+/* Admin retro coercion: overrides existing inline modern styles without changing JS hooks. */
+.admin-wrapper { background: #f0f0f0 !important; font-family: Verdana,Tahoma,Arial,sans-serif !important; font-size: 12px !important; }
+.admin-wrapper aside, .admin-wrapper main > div > div, .admin-wrapper form, .admin-wrapper table { border-radius: 0 !important; border: 1px solid #808080 !important; background: #fff !important; box-shadow: 2px 2px 0 #d0d0d0 !important; }
+.admin-wrapper h1, .admin-wrapper h2, .admin-wrapper h3 { font-family: Verdana,Tahoma,Arial,sans-serif !important; color: #003399 !important; }
+.admin-wrapper table { border-collapse: collapse !important; }
+.admin-wrapper th { background: linear-gradient(to bottom,#e8eef8,#c8d8f2) !important; color: #000 !important; border: 1px solid #9aa9c0 !important; padding: 6px !important; font-size: 11px !important; }
+.admin-wrapper td { border: 1px solid #c0c0c0 !important; padding: 6px !important; }
+.nav-link.active, .admin-wrapper .nav-link:hover { background: linear-gradient(to bottom,#fff7bf,#ffcc00) !important; color: #0000ee !important; border: 1px solid #cc9900 !important; }
+@media (max-width: 992px) {
+    .retro-portal-layout, .retro-article-layout { grid-template-columns: 1fr; }
+    .retro-featured-body, .retro-post-item { grid-template-columns: 1fr; }
+    .retro-post-thumb { width: 100%; height: 150px; }
+    .retro-top-nav { display:none; }
+    .retro-top-nav.open { display:block; position:fixed; top:48px; right:10px; left:10px; background:#fff; border:1px solid #003399; padding:8px; z-index:1100; }
+    .retro-top-nav.open ul { flex-direction:column; }
+    .retro-hamburger { display:flex; margin-left:auto; }
+}

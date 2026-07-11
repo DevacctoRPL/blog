@@ -1,7 +1,8 @@
     </main>
-    <footer style="background-color: var(--footer-bg); color: #a9b3ca; padding: 2rem 0; margin-top: 5rem; text-align: center;">
-        <div class="container">
-            <p style="font-size: 0.85rem;">&copy; <%= new Date().getFullYear() %> Blog. All rights reserved.</p>
+    <footer class="retro-footer">
+        <div class="container retro-footer-inner">
+            <div><strong>Blog Portal</strong> &copy; <%= new Date().getFullYear() %>. All rights reserved.</div>
+            <div class="retro-footer-links"><a href="<%= BASE_PATH %>">Home</a> | <a href="<%= BASE_PATH %>/posts">Posts</a> | <a href="<%= BASE_PATH %>/categories">Categories</a></div>
         </div>
     </footer>
 </body>

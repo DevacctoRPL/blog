@@ -4,28 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= typeof title !== 'undefined' ? title : 'Blog' %></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/favicon.png">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
-    <header>
-        <div class="container header-inner">
-            <a href="<%= BASE_PATH %>" class="logo">
-                <img src="/images/favicon.png" alt="Logo RPL" class="logo-img">
-                <span>Blog</span>
+<body class="retro-body">
+    <header class="retro-site-header">
+        <div class="container retro-header-inner">
+            <a href="<%= BASE_PATH %>" class="retro-logo">
+                <img src="/images/favicon.png" alt="Logo RPL" class="retro-logo-img">
+                <span>Blog Portal</span>
             </a>
-            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="hamburger retro-hamburger" id="hamburger" aria-label="Toggle menu" aria-controls="main-nav" aria-expanded="false">
+                <span></span><span></span><span></span>
             </button>
-            <nav id="main-nav">
+            <nav id="main-nav" class="retro-top-nav" aria-label="Main navigation">
                 <ul>
                     <li><a href="<%= BASE_PATH %>">Home</a></li>
                     <li><a href="<%= BASE_PATH %>/posts">All Posts</a></li>
@@ -38,10 +33,11 @@
     <script>
         (function(){
             var h=document.getElementById('hamburger'),n=document.getElementById('main-nav'),o=document.getElementById('mobile-nav-overlay'),b=document.body;
-            function toggleNav(){var isOpen=n.classList.toggle('open');h.classList.toggle('active');o.classList.toggle('active');b.classList.toggle('nav-open',isOpen);}
+            if(!h||!n||!o)return;
+            function toggleNav(){var isOpen=n.classList.toggle('open');h.classList.toggle('active',isOpen);h.setAttribute('aria-expanded',String(isOpen));o.classList.toggle('active',isOpen);b.classList.toggle('nav-open',isOpen);}
             h.addEventListener('click',toggleNav);
             o.addEventListener('click',toggleNav);
-            window.addEventListener('resize',function(){if(window.innerWidth>992){n.classList.remove('open');h.classList.remove('active');o.classList.remove('active');b.classList.remove('nav-open');}});
+            window.addEventListener('resize',function(){if(window.innerWidth>992){n.classList.remove('open');h.classList.remove('active');h.setAttribute('aria-expanded','false');o.classList.remove('active');b.classList.remove('nav-open');}});
         })();
     </script>
-    <main>
+    <main class="retro-main">
