@@ -38,7 +38,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-router.post("/", auth('admin'), upload.single("file"), mediaController.create);
+router.post("/", auth('admin', 'editor'), upload.single("file"), mediaController.create);
 router.put("/:id", auth('admin'), upload.single("file"), mediaController.update);
 router.delete("/:id", auth('admin'), mediaController.destroy);
 
