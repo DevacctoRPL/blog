@@ -815,6 +815,9 @@ p { margin: 0 0 8px; }
 .text-secondary { color: var(--text-secondary); }
 .divider-dashed { border: none; border-top: 1px dashed var(--border); margin: 0; }
 
+/* sticky sidebar columns */
+.sticky-col { position: sticky; top: 10px; align-self: start; }
+
 /* mobile table / panel scroll */
 .table-scroll { overflow-x: auto; }
 
@@ -824,6 +827,7 @@ p { margin: 0 0 8px; }
 @media (max-width: 860px) {
     .layout-3col, .layout-2col, .post-layout { grid-template-columns: 1fr; }
     .toc-sidebar, .right-sidebar { position: static; }
+    .sticky-col { position: static; top: auto; }
     .nav-toggle { display: flex; }
     .top-nav {
         display: none;
