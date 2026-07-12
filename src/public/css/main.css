@@ -5,9 +5,9 @@
 
 /* ---------- Design Tokens ---------- */
 :root {
-    --primary: #3366CC;
-    --primary-light: #6699FF;
-    --primary-dark: #003399;
+    --primary: #CC3333;
+    --primary-light: #FF6666;
+    --primary-dark: #990000;
     --secondary: #FFCC00;
     --secondary-dark: #FF9900;
     --background: #F0F0F0;
@@ -76,7 +76,7 @@ p { margin: 0 0 8px; }
    HEADER / TOP NAVIGATION
    ============================================================ */
 .site-header {
-    background: linear-gradient(to bottom, #6699FF 0%, #3366CC 50%, #003399 100%);
+    background: linear-gradient(to bottom, #FF6666 0%, #CC3333 50%, #990000 100%);
     border-bottom: 2px solid #002266;
     box-shadow: var(--panel-shadow);
 }
@@ -163,7 +163,7 @@ p { margin: 0 0 8px; }
     margin-bottom: 12px;
 }
 .panel-title {
-    background: linear-gradient(to bottom, #6699FF 0%, #3366CC 50%, #003399 100%);
+    background: linear-gradient(to bottom, #FF6666 0%, #CC3333 50%, #990000 100%);
     color: #fff;
     font-size: 14px;
     font-weight: bold;
@@ -201,7 +201,7 @@ p { margin: 0 0 8px; }
 .btn:hover {
     background: linear-gradient(to bottom, #ffffff 0%, #e8eefc 50%, #cfe0ff 100%);
     box-shadow: var(--bevel-out), 0 0 6px rgba(102, 153, 255, 0.7);
-    color: #003399;
+    color: #990000;
     text-decoration: none;
 }
 .btn:active {
@@ -210,7 +210,7 @@ p { margin: 0 0 8px; }
 }
 .btn-primary {
     color: #fff;
-    background: linear-gradient(to bottom, #6699FF 0%, #3366CC 50%, #003399 100%);
+    background: linear-gradient(to bottom, #FF6666 0%, #CC3333 50%, #990000 100%);
     border: 1px solid #002266;
     text-shadow: 1px 1px 0 #002266;
 }
@@ -248,7 +248,7 @@ p { margin: 0 0 8px; }
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-    border: 2px inset #6699FF;
+    border: 2px inset #FF6666;
 }
 .form-label {
     display: block;
@@ -312,7 +312,7 @@ p { margin: 0 0 8px; }
     background-position: 4px 8px;
 }
 .cat-list a:hover { background-color: #e8eefc; text-decoration: underline; }
-.cat-list a.current { font-weight: bold; color: #003399; }
+.cat-list a.current { font-weight: bold; color: #990000; }
 
 /* category tag (uses --cat-color inline) */
 .cat-tag {
@@ -325,7 +325,7 @@ p { margin: 0 0 8px; }
     border-radius: 2px;
     text-decoration: none;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
-    background: var(--cat-color, #3366CC);
+    background: var(--cat-color, #CC3333);
 }
 .cat-tag:visited { color: #fff; }
 .cat-tag:hover { color: #fff; filter: brightness(1.1); text-decoration: underline; }
@@ -396,12 +396,12 @@ p { margin: 0 0 8px; }
    HERO / PAGE HEADERS
    ============================================================ */
 .hero {
-    background: linear-gradient(to bottom, #eef3ff 0%, #dbe6ff 100%);
+    background: linear-gradient(to bottom, #ffeeee 0%, #ffdbdb 100%);
     border-bottom: 1px solid var(--border);
     padding: 18px 0;
     margin-bottom: 12px;
 }
-.hero h1 { font-size: 24px; color: #003399; margin: 0 0 4px; }
+.hero h1 { font-size: 24px; color: #990000; margin: 0 0 4px; }
 .hero-sub { font-size: 12px; color: var(--text-secondary); margin: 0; }
 
 .breadcrumb {
@@ -461,7 +461,7 @@ p { margin: 0 0 8px; }
     font-size: 12px;
 }
 .retro-table th {
-    background: linear-gradient(to bottom, #6699FF 0%, #3366CC 100%);
+    background: linear-gradient(to bottom, #FF6666 0%, #CC3333 100%);
     color: #fff;
     text-align: left;
     font-weight: bold;
@@ -533,10 +533,10 @@ p { margin: 0 0 8px; }
     display: block;
     height: 6px;
     margin: -14px -14px 10px;
-    background: var(--cat-color, #3366CC);
+    background: var(--cat-color, #CC3333);
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
-.cat-box:hover { background: #eef3ff; }
+.cat-box:hover { background: #ffeeee; }
 .cat-box-name { font-size: 14px; font-weight: bold; color: var(--link); }
 .cat-box:hover .cat-box-name { text-decoration: underline; }
 
@@ -560,7 +560,7 @@ p { margin: 0 0 8px; }
     border-bottom: 1px dotted #d0d0d0;
 }
 .toc-item a:hover { background: #e8eefc; text-decoration: underline; }
-.toc-item.active a { background: #dce6ff; font-weight: bold; color: #003399; }
+.toc-item.active a { background: #ffdcdc; font-weight: bold; color: #990000; }
 .toc-header-item { background: #f0f0f0; }
 .toc-header-item .toc-label { font-weight: bold; display: flex; align-items: center; gap: 5px; }
 
@@ -632,9 +632,9 @@ p { margin: 0 0 8px; }
    MARKDOWN CONTENT
    ============================================================ */
 .markdown-content { font-size: 13px; line-height: 1.6; color: #000; }
-.markdown-content h1 { font-size: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 4px; color: #003399; }
-.markdown-content h2 { font-size: 17px; border-bottom: 1px solid var(--border); padding-bottom: 3px; color: #003399; }
-.markdown-content h3 { font-size: 14px; color: #003399; }
+.markdown-content h1 { font-size: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 4px; color: #990000; }
+.markdown-content h2 { font-size: 17px; border-bottom: 1px solid var(--border); padding-bottom: 3px; color: #990000; }
+.markdown-content h3 { font-size: 14px; color: #990000; }
 .markdown-content a { color: var(--link); }
 .markdown-content blockquote {
     margin: 8px 0;
@@ -681,7 +681,7 @@ p { margin: 0 0 8px; }
     color: #000;
 }
 .page-btn:hover { background: linear-gradient(to bottom, #e8eefc, #cfe0ff); }
-.page-btn.active { background: linear-gradient(to bottom, #6699FF, #003399); color: #fff; font-weight: bold; }
+.page-btn.active { background: linear-gradient(to bottom, #FF6666, #990000); color: #fff; font-weight: bold; }
 .page-btn:disabled { opacity: 0.5; cursor: default; }
 
 /* ============================================================
@@ -705,7 +705,7 @@ p { margin: 0 0 8px; }
     display: flex; align-items: center; gap: 8px;
 }
 .error-body { padding: 16px; text-align: center; }
-.error-code { font-size: 64px; font-weight: bold; color: #003399; margin: 0; }
+.error-code { font-size: 64px; font-weight: bold; color: #990000; margin: 0; }
 .error-actions { margin-top: 16px; }
 
 /* ============================================================
@@ -718,7 +718,7 @@ p { margin: 0 0 8px; }
     box-shadow: var(--panel-shadow);
 }
 .auth-title {
-    background: linear-gradient(to bottom, #6699FF 0%, #3366CC 100%);
+    background: linear-gradient(to bottom, #FF6666 0%, #CC3333 100%);
     color: #fff; font-size: 15px; font-weight: bold;
     padding: 8px 12px; border-bottom: 1px solid #002266;
     text-shadow: 1px 1px 0 #002266;
@@ -734,7 +734,7 @@ p { margin: 0 0 8px; }
 /* ============================================================
    FOOTER
    ============================================================ */
-.site-footer { margin-top: 16px; border-top: 2px solid #003399; flex-shrink: 0; }
+.site-footer { margin-top: 16px; border-top: 2px solid #990000; flex-shrink: 0; }
 .footer-cols {
     background: linear-gradient(to bottom, #f4f4f4, #e2e2e2);
     border-bottom: 1px solid var(--border);
@@ -742,13 +742,13 @@ p { margin: 0 0 8px; }
 }
 .footer-cols .container { display: flex; gap: 24px; flex-wrap: wrap; }
 .footer-col { flex: 1; min-width: 150px; }
-.footer-col h4 { font-size: 12px; color: #003399; border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-bottom: 6px; }
+.footer-col h4 { font-size: 12px; color: #990000; border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-bottom: 6px; }
 .footer-col ul { list-style: none; margin: 0; padding: 0; }
 .footer-col li { margin-bottom: 3px; }
 .footer-col a { font-size: 11px; color: var(--link); text-decoration: none; }
 .footer-col a:hover { text-decoration: underline; }
 .footer-bar {
-    background: linear-gradient(to bottom, #3366CC, #003399);
+    background: linear-gradient(to bottom, #CC3333, #990000);
     color: #fff; text-align: center; font-size: 11px; padding: 8px 0;
 }
 .footer-bar a { color: #fff; }
@@ -778,11 +778,11 @@ p { margin: 0 0 8px; }
 }
 .admin-nav a:hover {
     background: linear-gradient(to bottom, #ffffff, #e8eefc);
-    border-color: #6699FF;
+    border-color: #FF6666;
     text-decoration: none;
 }
 .admin-nav a.active {
-    background: linear-gradient(to bottom, #6699FF, #003399);
+    background: linear-gradient(to bottom, #FF6666, #990000);
     color: #fff;
     border-color: #002266;
     text-shadow: 1px 1px 0 #002266;
@@ -797,7 +797,7 @@ p { margin: 0 0 8px; }
     cursor: pointer; font-size: 12px; text-shadow: 1px 1px 0 #7a1414;
 }
 .admin-main { flex: 1; padding: 16px 20px; overflow-y: auto; }
-.admin-page-head h1 { font-size: 18px; color: #003399; margin-bottom: 2px; }
+.admin-page-head h1 { font-size: 18px; color: #990000; margin-bottom: 2px; }
 .admin-page-head p { font-size: 11px; color: var(--text-secondary); margin: 0 0 12px; }
 .admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
 .md-toolbar { display: inline-flex; gap: 4px; padding: 3px; background: #d4d0c8; border: 1px solid #808080; }
@@ -830,7 +830,7 @@ p { margin: 0 0 8px; }
         position: absolute;
         top: 56px; right: 0; left: 0;
         flex-direction: column;
-        background: linear-gradient(to bottom, #3366CC, #003399);
+        background: linear-gradient(to bottom, #CC3333, #990000);
         height: auto;
         z-index: 500;
         border-bottom: 2px solid #002266;
