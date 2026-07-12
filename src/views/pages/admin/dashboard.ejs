@@ -1,119 +1,367 @@
-<%- include('../../partials/header', { title: 'Admin Dashboard - Blog' }) %>
-    <div
-        style="max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-        <div
-            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-bottom: 20px;">
-            <h1 style="color: #2c3e50; margin: 0;">Dashboard Admin</h1>
-            <button onclick="logout()"
-                style="padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Logout</button>
-        </div>
+<%- include('../../partials/header', { title: 'Admin Dashboard - Blog', activeNav: 'home' }) %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 
-        <div style="margin-bottom: 20px;">
-            <button onclick="resetForm(); document.getElementById('post-form').style.display='block'"
-                style="padding: 10px 15px; background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">+
-                Tulis Post Baru</button>
-        </div>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="menu-head">Menu Utama</div>
+            <ul class="admin-nav">
+                <li>
+                    <a href="javascript:void(0)" onclick="switchTab('posts')" id="nav-posts" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v12a2 2 0 01-2 2z"></path><path d="M7 8h5M7 12h10M7 16h10"></path></svg>
+                        Kelola Postingan
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="switchTab('categories')" id="nav-categories" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10M7 12h10M7 17h10"></path></svg>
+                        Kelola Kategori
+                    </a>
+                </li>
+            </ul>
+            <button onclick="logout()" class="admin-logout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Keluar Sesi
+            </button>
+        </aside>
 
-        <div id="post-form"
-            style="display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #ddd;">
-            <h3 id="form-title">Buat Postingan Baru</h3>
-            <form onsubmit="submitPost(event)">
-                <input type="text" id="post-title" placeholder="Judul" required
-                    style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box;">
-                <select id="post-category" required
-                    style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box;">
-                    <option value="">-- Pilih Kategori --</option>
-                </select>
-                <textarea id="post-content" placeholder="Isi postingan..." required rows="6"
-                    style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box;"></textarea>
-                <button type="submit"
-                    style="padding: 10px 15px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Simpan
-                    Post</button>
-                <button type="button" onclick="resetForm()"
-                    style="padding: 10px 15px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 10px;">Batal</button>
-            </form>
-        </div>
+        <main class="admin-main">
+            <div id="view-posts" class="dashboard-view">
+                <div class="admin-page-head">
+                    <h1>Postingan</h1>
+                    <p>Kelola dan tulis artikel terbaru Anda.</p>
+                </div>
+                <div class="admin-toolbar">
+                    <span class="text-secondary">Daftar seluruh artikel yang telah dipublikasikan.</span>
+                    <button onclick="resetForm(); toggleEditor(true)" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16m8-8H4"></path></svg>
+                        Tulis Post Baru
+                    </button>
+                </div>
 
-        <h2>Daftar Postingan Anda</h2>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-            <thead>
-                <tr style="background: #34495e; color: white; text-align: left;">
-                    <th style="padding: 12px; border: 1px solid #ddd;">Judul</th>
-                    <th style="padding: 12px; border: 1px solid #ddd;">Kategori</th>
-                    <th style="padding: 12px; border: 1px solid #ddd;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="admin-posts-list">
-                <tr>
-                    <td colspan="3" style="padding: 12px; text-align: center;">Loading...</td>
-                </tr>
-            </tbody>
-        </table>
+                <div class="panel">
+                    <div class="panel-title">Daftar Postingan</div>
+                    <div class="table-scroll">
+                        <table class="retro-table">
+                            <thead>
+                                <tr>
+                                    <th>Judul Artikel</th>
+                                    <th>Thumbnail</th>
+                                    <th>Kategori</th>
+                                    <th>Tanggal</th>
+                                    <th style="text-align:right;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-posts-list">
+                                <tr><td colspan="5" style="text-align:center;">Memuat…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="pagination" style="display:none; padding:10px 12px; border-top:1px solid var(--border); justify-content:space-between; align-items:center;">
+                        <span id="page-info" class="text-secondary"></span>
+                        <div style="display:flex; gap:6px;">
+                            <button id="prev-page" onclick="goToPage(currentPage - 1)" class="page-btn">&laquo; Prev</button>
+                            <span id="page-numbers" style="display:flex; gap:4px; align-items:center;"></span>
+                            <button id="next-page" onclick="goToPage(currentPage + 1)" class="page-btn">Next &raquo;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-categories" class="dashboard-view" style="display:none;">
+                <div class="admin-page-head">
+                    <h1>Kategori</h1>
+                    <p>Organisir postingan Anda berdasarkan kategori.</p>
+                </div>
+
+                <div class="layout-2col" style="grid-template-columns:320px 1fr;">
+                    <div class="panel">
+                        <div class="panel-title">Tambah Kategori</div>
+                        <div class="panel-body">
+                            <form onsubmit="submitCategory(event)">
+                                <div class="form-row">
+                                    <label class="form-label" for="cat-name">Nama Kategori</label>
+                                    <input type="text" id="cat-name" class="form-input" placeholder="Contoh: Teknologi" required>
+                                </div>
+                                <button type="submit" class="btn" style="width:100%;">Simpan Kategori</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-title">Daftar Kategori</div>
+                        <div class="table-scroll">
+                            <table class="retro-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Kategori</th>
+                                        <th>Slug</th>
+                                        <th style="text-align:right;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-categories-list">
+                                    <tr><td colspan="3" style="text-align:center;">Memuat…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-editor" class="dashboard-view" style="display:none;">
+                <div class="panel" style="max-width:1100px; margin:0 auto;">
+                    <div class="panel-title">
+                        <a href="javascript:void(0)" onclick="toggleEditor(false)" style="color:#fff; text-decoration:none; display:flex; align-items:center; gap:6px; margin-right:auto;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 19l-7-7 7-7"></path></svg>
+                            Kembali
+                        </a>
+                        <span id="form-title" style="flex:1; text-align:center;">Tulis Post Baru</span>
+                        <span style="width:80px;"></span>
+                    </div>
+                    <div class="panel-body">
+                        <form onsubmit="submitPost(event)">
+                            <div class="layout-2col" style="grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px;">
+                                <div class="form-row" style="margin:0;">
+                                    <label class="form-label" for="post-title">Judul Postingan</label>
+                                    <input type="text" id="post-title" class="form-input" placeholder="Judul" required style="font-size:14px;">
+                                </div>
+                                <div class="form-row" style="margin:0;">
+                                    <label class="form-label" for="post-category">Kategori</label>
+                                    <select id="post-category" class="form-select" required>
+                                        <option value="">-- Pilih Kategori --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <label class="form-label">Konten Artikel (Markdown)</label>
+                                <div class="md-toolbar">
+                                    <button type="button" onclick="insertMarkdown('## ')">H2</button>
+                                    <button type="button" onclick="insertMarkdown('### ')">H3</button>
+                                    <button type="button" onclick="insertMarkdown('**', '**')">B</button>
+                                    <button type="button" onclick="insertMarkdown('- ')">List</button>
+                                    <button type="button" onclick="insertMarkdown('```javascript\n', '\n```')">Code</button>
+                                </div>
+                                <div class="layout-2col" style="grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;">
+                                    <textarea id="post-content" class="form-textarea" placeholder="Ketik disini" required rows="20" oninput="updatePreview()"></textarea>
+                                    <div id="markdown-preview" class="markdown-content" style="border:1px solid var(--border); background:#fff; padding:12px; max-height:560px; overflow:auto;">
+                                        <p class="text-secondary">Pratinjau konten akan muncul secara real-time…</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <label class="form-label" for="post-thumbnail">Thumbnail</label>
+                                <input type="file" id="post-thumbnail" name="thumbnail" accept="image/*" onchange="previewThumbnail(event)" class="form-input" style="padding:4px;">
+                                <div id="post-thumbnail-preview" style="margin-top:10px; display:none;">
+                                    <img id="post-thumbnail-img" src="" alt="Preview thumbnail" style="width:160px; height:110px; object-fit:cover; border:1px solid var(--border);">
+                                </div>
+                                <p class="text-secondary" style="font-size:11px; margin-top:6px;">Kosongkan jika tidak ingin mengubah thumbnail (saat edit).</p>
+                            </div>
+
+                            <div style="display:flex; gap:10px; justify-content:flex-end; border-top:1px solid var(--border); padding-top:14px;">
+                                <button type="button" onclick="toggleEditor(false)" class="btn">Batal</button>
+                                <button type="submit" class="btn btn-primary">Simpan Postingan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
+    <style>
+        .nav-link:hover, .nav-link.active { text-decoration: none; }
+        .dashboard-view { animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '<%= BASE_PATH %>/login';
-        }
-
         function logout() {
-            localStorage.removeItem('token');
-            window.location.href = '<%= BASE_PATH %>/login';
+            fetch('<%= BASE_PATH %>/logout', { method: 'POST' }).then(() => {
+                window.location.href = '<%= BASE_PATH %>/login';
+            });
         }
 
-        let editingPostId = null;
+        function switchTab(tab) {
+            document.querySelectorAll('.dashboard-view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
 
-        async function loadData() {
-            try {
-                // Load Categories
-                const catRes = await fetch('<%= BASE_PATH %>/categories', { headers: { 'Accept': 'application/json' } });
-                const categories = await catRes.json();
-                const catSelect = document.getElementById('post-category');
-                
-                if (Array.isArray(categories)) {
-                    catSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
-                    categories.forEach(c => {
-                        catSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-                    });
-                }
-
-                // Load Posts
-                const postRes = await fetch('<%= BASE_PATH %>/posts', { headers: { 'Accept': 'application/json' } });
-                const posts = await postRes.json();
-                const tbody = document.getElementById('admin-posts-list');
-
-                if (!Array.isArray(posts) || posts.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" style="padding: 12px; text-align: center;">Belum ada postingan</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = '';
-                posts.forEach(p => {
-                    tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px;">${p.title}</td>
-                        <td style="padding: 12px;">${p.Category ? p.Category.name : '-'}</td>
-                        <td style="padding: 12px;">
-                            <button onclick='openEditForm(${JSON.stringify(p).replace(/'/g, "&apos;")})' style="padding: 5px 10px; background: #f39c12; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px;">Edit</button>
-                            <button onclick="deletePost(${p.id})" style="padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-                });
-            } catch (e) {
-                console.error(e);
+            if (tab === 'posts') {
+                document.getElementById('view-posts').style.display = 'block';
+                document.getElementById('nav-posts').classList.add('active');
+            } else if (tab === 'categories') {
+                document.getElementById('view-categories').style.display = 'block';
+                document.getElementById('nav-categories').classList.add('active');
             }
         }
 
-        function openEditForm(post) {
-            editingPostId = post.id;
-            document.getElementById('post-title').value = post.title;
-            document.getElementById('post-category').value = post.CategoryId || "";
-            document.getElementById('post-content').value = post.content;
-            document.getElementById('form-title').textContent = "Edit Postingan";
-            document.getElementById('post-form').style.display = 'block';
-            document.getElementById('post-form').scrollIntoView({ behavior: 'smooth' });
+        function toggleEditor(show) {
+            document.querySelectorAll('.dashboard-view').forEach(v => v.style.display = 'none');
+            if (show) {
+                document.getElementById('view-editor').style.display = 'block';
+            } else {
+                document.getElementById('view-posts').style.display = 'block';
+            }
+        }
+
+        marked.setOptions({ gfm: true, breaks: true });
+        function updatePreview() {
+            const content = document.getElementById('post-content').value;
+            const preview = document.getElementById('markdown-preview');
+            if (content) {
+                preview.innerHTML = marked.parse(content);
+                preview.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+            } else {
+                preview.innerHTML = '<p class="text-secondary">Pratinjau konten akan muncul secara real-time…</p>';
+            }
+        }
+
+        function insertMarkdown(prefix, suffix = '') {
+            const textarea = document.getElementById('post-content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, start) + prefix + text.substring(start, end) + suffix + text.substring(end);
+            textarea.focus();
+            const newPos = start + prefix.length + (end - start) + suffix.length;
+            textarea.setSelectionRange(newPos, newPos);
+            updatePreview();
+        }
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalPosts = 0;
+
+        async function loadData(page = 1) {
+            try {
+                const catRes = await fetch('<%= BASE_PATH %>/api/categories', { headers: { 'Accept': 'application/json' } });
+                const categories = await catRes.json();
+                const catSelect = document.getElementById('post-category');
+                const catTbody = document.getElementById('admin-categories-list');
+                catSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
+                catTbody.innerHTML = '';
+
+                categories.forEach(c => {
+                    catSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                    catTbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold;">${c.name}</td>
+                            <td class="text-secondary">${c.slug}</td>
+                            <td style="text-align:right;">
+                                <button onclick="deleteCategory(${c.id})" class="btn btn-danger btn-sm">Hapus</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const postRes = await fetch(`<%= BASE_PATH %>/api/posts?page=${page}&limit=10`, { headers: { 'Accept': 'application/json' } });
+                const result = await postRes.json();
+                const posts = result.data;
+                const meta = result.meta;
+                currentPage = meta.page;
+                totalPages = meta.totalPages;
+                totalPosts = meta.total;
+
+                const postTbody = document.getElementById('admin-posts-list');
+                postTbody.innerHTML = '';
+
+                if (posts.length === 0) {
+                    postTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada postingan.</td></tr>';
+                }
+
+                posts.forEach(p => {
+                    const date = new Date(p.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    postTbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold;">${p.title}</td>
+                            <td>
+                                ${p.pathID
+                                    ? `<img src="${'<%= BASE_PATH %>/' + p.pathID}" alt="thumbnail" style="width:64px; height:44px; object-fit:cover; border:1px solid var(--border);">`
+                                    : `<span class="text-secondary">-</span>`}
+                            </td>
+                            <td><span class="cat-tag" style="--cat-color: var(--primary);">${p.Category ? p.Category.name : '-'}</span></td>
+                            <td class="text-secondary">${date}</td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <button onclick='prepareEdit("${p.id}")' class="btn btn-primary btn-sm">Edit</button>
+                                <button onclick="deletePost(${p.id})" class="btn btn-danger btn-sm" style="margin-left:6px;">Hapus</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                renderPagination();
+            } catch (e) { console.error(e); }
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            if (totalPages <= 1) { pagination.style.display = 'none'; return; }
+            pagination.style.display = 'flex';
+
+            document.getElementById('page-info').textContent = `Halaman ${currentPage} dari ${totalPages} (${totalPosts} total)`;
+            document.getElementById('prev-page').disabled = currentPage <= 1;
+            document.getElementById('next-page').disabled = currentPage >= totalPages;
+
+            const container = document.getElementById('page-numbers');
+            container.innerHTML = '';
+            const maxVisible = 5;
+            let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let end = Math.min(totalPages, start + maxVisible - 1);
+            if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+
+            for (let i = start; i <= end; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+                container.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            loadData(page);
+        }
+
+        let editingPostId = null;
+        async function prepareEdit(id) {
+            try {
+                const res = await fetch(`<%= BASE_PATH %>/api/posts/${id}`, { headers: { 'Accept': 'application/json' } });
+                const post = await res.json();
+                editingPostId = post.id;
+                document.getElementById('post-title').value = post.title;
+                document.getElementById('post-category').value = post.CategoryId || "";
+                document.getElementById('post-content').value = post.content;
+                document.getElementById('form-title').textContent = "Edit Postingan";
+                const thumbInput = document.getElementById('post-thumbnail');
+                thumbInput.value = '';
+                const preview = document.getElementById('post-thumbnail-preview');
+                if (post.pathID) {
+                    document.getElementById('post-thumbnail-img').src = `<%= BASE_PATH %>/${post.pathID}`;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+                toggleEditor(true);
+                updatePreview();
+            } catch (e) { alert('Error fetching post'); }
+        }
+
+        function previewThumbnail(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('post-thumbnail-preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('post-thumbnail-img').src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
         }
 
         function resetForm() {
@@ -121,58 +369,49 @@
             document.getElementById('post-title').value = '';
             document.getElementById('post-category').value = '';
             document.getElementById('post-content').value = '';
-            document.getElementById('form-title').textContent = "Buat Postingan Baru";
-            document.getElementById('post-form').style.display = 'none';
+            document.getElementById('post-thumbnail').value = '';
+            document.getElementById('post-thumbnail-preview').style.display = 'none';
+            document.getElementById('form-title').textContent = "Tulis Post Baru";
+            updatePreview();
         }
 
         async function submitPost(e) {
             e.preventDefault();
-            const title = document.getElementById('post-title').value;
-            const categoryId = document.getElementById('post-category').value;
-            const content = document.getElementById('post-content').value;
+            const formData = new FormData();
+            formData.append('title', document.getElementById('post-title').value);
+            formData.append('CategoryId', document.getElementById('post-category').value);
+            formData.append('content', document.getElementById('post-content').value);
 
-            const url = editingPostId ? `<%= BASE_PATH %>/posts/${editingPostId}` : '<%= BASE_PATH %>/posts';
+            const thumbInput = document.getElementById('post-thumbnail');
+            if (thumbInput.files.length > 0) {
+                formData.append('thumbnail', thumbInput.files[0]);
+            }
+
+            const url = editingPostId ? `<%= BASE_PATH %>/api/posts/${editingPostId}` : '<%= BASE_PATH %>/api/posts';
             const method = editingPostId ? 'PUT' : 'POST';
-
-            try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, CategoryId: categoryId, content })
-                });
-
-                if (res.ok) {
-                    alert(editingPostId ? 'Berhasil memperbarui postingan!' : 'Berhasil membuat postingan!');
-                    resetForm();
-                    loadData();
-                } else {
-                    const data = await res.json();
-                    alert('Gagal: ' + (data.error || data.message));
-                }
-            } catch (e) {
-                alert('Error');
-            }
+            const res = await fetch(url, {
+                method,
+                credentials: 'same-origin',
+                body: formData
+            });
+            if (res.ok) { toggleEditor(false); loadData(); } else { alert('Error saving post'); }
         }
 
-        async function deletePost(id) {
-            if (!confirm('Yakin hapus?')) return;
-            try {
-                const res = await fetch(`<%= BASE_PATH %>/posts/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    loadData();
-                }
-            } catch (e) {
-                alert('Gagal hapus');
-            }
+        async function submitCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('cat-name').value;
+            const res = await fetch('<%= BASE_PATH %>/api/categories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ name })
+            });
+            if (res.ok) { document.getElementById('cat-name').value = ''; loadData(); } else { alert('Error saving category'); }
         }
+
+        async function deletePost(id) { if (confirm('Hapus post ini?')) { await fetch(`<%= BASE_PATH %>/api/posts/${id}`, { method: 'DELETE', credentials: 'same-origin' }); loadData(); } }
+        async function deleteCategory(id) { if (confirm('Hapus kategori ini? Semua post terkait akan kehilangan kategori.')) { await fetch(`<%= BASE_PATH %>/api/categories/${id}`, { method: 'DELETE', credentials: 'same-origin' }); loadData(); } }
 
         loadData();
     </script>
-
-    <%- include('../../partials/footer') %>
+<%- include('../../partials/footer') %>

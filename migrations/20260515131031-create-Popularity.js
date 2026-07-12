@@ -1,34 +1,33 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Categories', {
+    await queryInterface.createTable("Popularity", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
-      name: {
-        type: Sequelize.STRING,
+      PostId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true
+        references: { model: "Posts", key: "id" },
+        onDelete: "CASCADE"
       },
-      slug: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+      views: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        defaultValue: Sequelize.NOW
       }
     });
   },
-
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Categories');
+    await queryInterface.dropTable("Popularity");
   }
 };

@@ -1,49 +1,49 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= typeof title !=='undefined' ? title : 'Blog' %>
-    </title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            margin-left: 15px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-    </style>
+    <title><%= typeof title !== 'undefined' ? title : 'Blog' %></title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-
 <body>
-    <header>
-        <div style="font-size: 1.5em; font-weight: bold;"><a href="<%= BASE_PATH %>" style="margin-left:0;">Blog</a></div>
-        <nav>
-            <a href="<%= BASE_PATH %>">Beranda</a>
-        </nav>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="<%= BASE_PATH %>" class="logo">
+                <img src="/images/favicon.png" alt="Logo" class="logo-img">
+                <span>Blog</span>
+            </a>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="top-nav" id="top-nav" aria-label="Primary">
+                <a href="<%= BASE_PATH %>" class="<%= typeof activeNav !== 'undefined' && activeNav === 'home' ? 'active' : '' %>">Home</a>
+                <a href="<%= BASE_PATH %>/posts" class="<%= typeof activeNav !== 'undefined' && activeNav === 'posts' ? 'active' : '' %>">Posts</a>
+                <a href="<%= BASE_PATH %>/categories" class="<%= typeof activeNav !== 'undefined' && activeNav === 'categories' ? 'active' : '' %>">Categories</a>
+                <a href="<%= BASE_PATH %>/search" class="<%= typeof activeNav !== 'undefined' && activeNav === 'search' ? 'active' : '' %>">Search</a>
+                <a href="<%= BASE_PATH %>/login" class="<%= typeof activeNav !== 'undefined' && activeNav === 'login' ? 'active' : '' %>">Login</a>
+            </nav>
+        </div>
     </header>
-    <main class="container">
+    <script>
+        (function () {
+            var t = document.getElementById('nav-toggle'),
+                n = document.getElementById('top-nav');
+            if (!t || !n) return;
+            t.addEventListener('click', function () {
+                var open = n.classList.toggle('open');
+                t.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 860) {
+                    n.classList.remove('open');
+                    t.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
+    </script>
+    <main class="container" style="padding-top:12px;padding-bottom:24px;">

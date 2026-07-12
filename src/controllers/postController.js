@@ -1,5 +1,36 @@
 import db from "../../models/index.js";
-const { Post, Category, Sequelize } = db;
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+const { Post, Category, Sequelize, Popularity } = db;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const thumbnailStorageRoot = path.join(__dirname, "../../storage/image/thumbnails");
+if (!fs.existsSync(thumbnailStorageRoot)) {
+  fs.mkdirSync(thumbnailStorageRoot, { recursive: true });
+}
+
+const thumbnailStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, thumbnailStorageRoot),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const thumbnailUpload = multer({
+  storage: thumbnailStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Hanya file gambar yang diperbolehkan"));
+  },
+});
+
+export const uploadThumbnail = thumbnailUpload.single("thumbnail");
 
 function generateSlug(title) {
   return title
@@ -21,19 +52,53 @@ const toSlug = (text) => {
     .replace(/--+/g, '-');
 };
 
+// Get All Posts (API)
+export const getAllPosts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Post.findAndCountAll({
+      include: [
+        { model: Category },
+        { model: db.User, attributes: ["username"] }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
+    });
+
+    res.json({
+      meta: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit)
+      },
+      data: rows
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Create Post
 export const createPost = async (req, res) => {
   try {
-    const { title, content, CategoryId, pathID } = req.body;
-    const slug = toSlug(title)
+    const { title, content, CategoryId } = req.body;
+    const slug = toSlug(title);
+    const pathID = req.file
+      ? `storage/image/thumbnails/${req.file.filename}`
+      : null;
+
     const newPost = await db.Post.create({
       title,
       slug,
       content,
       CategoryId,
       pathID,
-      slug,
-      UserId: req.user.id // ambil dari token
+      UserId: req.internalUserId
     });
 
     res.status(201).json(newPost);
@@ -42,32 +107,60 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const searchPosts = async (req, res) => {
-  const asd = req.query.q; // ambil keyword dari query string ?q=...
-  console.log("RIJAL - Search query:", asd);
+export const getPostById = async (req, res) => {
+  try {
+    const post = await Post.findByPk(req.params.id, {
+      include: [
+        { model: Category },
+        { model: db.User, attributes: ["username"] }
+      ]
+    });
 
-  const posts = await Post.findAll({
-    where: { title: { [Sequelize.Op.iLike]: `%${asd}%` } }
-  });
-  res.json(posts);
+    if (!post) return res.status(404).json({ error: "Post tidak ditemukan" });
+
+    // Auto increment views di Popularity
+    let stats = await Popularity.findOne({ where: { PostId: post.id } });
+    if (!stats) {
+      stats = await Popularity.create({ PostId: post.id, views: 0 });
+    }
+    await stats.increment("views");
+    await stats.reload();
+
+    res.json({ id: post.id, title: post.title, content: post.content, slug: post.slug, category: post.Category, user: post.User, views: stats.views});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const searchPosts = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const posts = await Post.findAll({
+      where: { title: { [Sequelize.Op.iLike]: `%${query}%` } },
+      include: [
+        { model: Category },
+        { model: db.User, attributes: ["username"] }
+      ]
+    });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 export const getPostBySlug = async (req, res) => {
   try {
     const post = await Post.findOne({
-      where: {
-        slug: req.params.slug
-      },
+      where: { slug: req.params.slug },
       include: [
         { model: Category },
         { model: db.User, attributes: ["username"] }
       ]
-    })
-    if (!post) return res.status(404).render("pages/public/404");
-
-    res.render("pages/public/post-detail", { post });
-  } catch (err) {
-    res.render("pages/public/404")
+    });
+    if (!post) return res.status(404).json({ error: "Post tidak ditemukan" });
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -81,17 +174,9 @@ export const getPostByCategory = async (req, res) => {
       ],
       order: [['createdAt', 'DESC']]
     });
-
-    const categories = await Category.findAll();
-
-    res.render("pages/public/home", {
-      posts,
-      categories,
-      isLandingPage: false,
-      title: "Kategori - Blog"
-    });
-  } catch (err) {
-    res.status(500).render("pages/public/404");
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 // Update Post
@@ -102,6 +187,10 @@ export const updatePost = async (req, res) => {
 
     if (title) {
       updateData.slug = toSlug(title);
+    }
+
+    if (req.file) {
+      updateData.pathID = `storage/image/thumbnails/${req.file.filename}`;
     }
 
     const [updated] = await Post.update(

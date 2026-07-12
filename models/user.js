@@ -19,14 +19,15 @@ export default (sequelize, DataTypes) => {
       allowNull: false
     },
     role: {
-      type: DataTypes.ENUM("admin"),
-      defaultValue: "admin"
+      type: DataTypes.ENUM("admin", "editor", "authenticated"),
+      defaultValue: "authenticated"
     }
   }, {});
 
   // Relasi (kalau nanti ada Post)
   User.associate = (models) => {
     User.hasMany(models.Post, { foreignKey: "UserId" });
+    User.hasMany(models.UserLike, { foreignKey: "UserId" });
   };
 
   return User;

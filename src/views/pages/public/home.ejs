@@ -1,44 +1,134 @@
-<%- include('../../partials/header', { title: 'Beranda - Blog' }) %>
-    <div style="text-align: center; margin-bottom: 40px; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-        <h1 style="margin-top: 0; color: #2c3e50;">Selamat Datang di Blog</h1>
-        <p style="color: #7f8c8d; font-size: 1.1em;">Tempat berbagi wawasan seputar teknologi, sains, dan kehidupan.</p>
-        <% if (isLandingPage) { %>
-            <div style="margin-top: 20px;">
-                <a href="<%= BASE_PATH %>/posts" style="display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Lihat Semua Postingan &rarr;</a>
-            </div>
-        <% } %>
-    </div>
+<%- include('../../partials/header', { title: 'Blog - Insight Pengembang Perangkat Lunak', activeNav: 'home' }) %>
 
-    <div style="display: flex; gap: 20px;">
-        <%- include('../../partials/sidebar') %>
-
-        <section style="flex: 1;">
-            <% if (posts.length===0) { %>
-                <p>Belum ada postingan.</p>
+    <section class="hero">
+        <div class="container">
+            <h1><%= isLandingPage ? 'Insight & Update Rekayasa Perangkat Lunak' : (typeof title !== 'undefined' && title ? title : 'Semua Artikel') %></h1>
+            <p class="hero-sub">
+                <% if (isLandingPage) { %>
+                    Temukan artikel berkualitas tinggi, tutorial coding, sains, dan perkembangan teknologi terbaru.
+                <% } else if (typeof q !== 'undefined' && q) { %>
+                    Hasil pencarian untuk kata kunci "<strong><%= q %></strong>"
                 <% } else { %>
-                    <% posts.forEach(post=> { %>
-                        <article
-                            style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                            <h2 style="margin-top: 0;"><a href="<%= BASE_PATH %>/posts/<%= post.slug %>"
-                                    style="text-decoration: none; color: #2c3e50;">
-                                    <%= post.title %>
-                                </a></h2>
-                            <div style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 15px;">
-                                <span style="background: #ecf0f1; padding: 3px 8px; border-radius: 4px;">
-                                    <%= post.Category ? post.Category.name : 'Uncategorized' %>
-                                </span>
-                                &bull; Oleh <%= post.User ? post.User.username : 'Unknown' %>
-                                    &bull; <%= new Date(post.createdAt).toLocaleDateString('id-ID') %>
-                            </div>
-                            <p style="color: #555; line-height: 1.6;">
-                                <%= post.content.substring(0, 150) %>...
-                            </p>
-                            <a href="<%= BASE_PATH %>/posts/<%= post.slug %>"
-                                style="color: #3498db; text-decoration: none; font-weight: bold;">Baca selengkapnya
-                                &rarr;</a>
-                        </article>
-                        <% }) %>
+                    Jelajahi berbagai artikel dan tutorial seputar rekayasa perangkat lunak.
+                <% } %>
+            </p>
+            <form class="search-form" action="<%= BASE_PATH %>/search" method="GET">
+                <input type="search" name="query" value="<%= typeof q !== 'undefined' && q ? q : '' %>" placeholder="Cari topik, tutorial, atau bahasa pemrograman..." autocomplete="off">
+                <button type="submit" class="btn btn-primary">Cari</button>
+            </form>
+        </div>
+    </section>
+
+    <div class="layout-3col">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar-col sticky-col">
+            <%- include('../../partials/sidebar', { categories, BASE_PATH }) %>
+        </div>
+
+        <!-- MAIN COLUMN -->
+        <div class="main-col">
+
+            <% if (isLandingPage && posts && posts.length > 0) {
+                var featuredPost = posts[0];
+                var featThumbUrl = featuredPost.thumbnail || featuredPost.pathID;
+                if (featThumbUrl && !featThumbUrl.startsWith('http') && !featThumbUrl.startsWith('/')) {
+                    featThumbUrl = BASE_PATH + '/' + featThumbUrl;
+                }
+            %>
+            <div class="featured-post">
+                <div class="featured-post-thumb">
+                    <% if (featThumbUrl) { %>
+                        <img src="<%= featThumbUrl %>" alt="<%= featuredPost.title %>">
+                    <% } else { %>
+                        <div class="post-card-thumb-placeholder" style="height:100%"></div>
                     <% } %>
-        </section>
+                    <% if (featuredPost.Category) { %>
+                        <span class="featured-post-cat cat-tag" style="--cat-color: <%= catColor(featuredPost.Category.name) %>;">
+                            <%= featuredPost.Category.name %>
+                        </span>
+                    <% } %>
+                </div>
+                <div class="featured-post-body">
+                    <h2 class="featured-post-title">
+                        <a href="<%= BASE_PATH %>/posts/<%= featuredPost.slug %>"><%= featuredPost.title %></a>
+                    </h2>
+                    <div class="featured-post-meta">
+                        Oleh <%= featuredPost.User ? featuredPost.User.username : 'Admin' %>
+                        | <%= featuredPost.createdAt ? new Date(featuredPost.createdAt).toLocaleDateString('id-ID', { month: 'long', day: 'numeric', year: 'numeric' }) : '-' %>
+                    </div>
+                    <p class="featured-post-excerpt">
+                        <%= (featuredPost.content || '').replace(/[#*`]/g, '').substring(0, 200) %>…
+                    </p>
+                    <a href="<%= BASE_PATH %>/posts/<%= featuredPost.slug %>" class="readmore">Baca selengkapnya</a>
+                </div>
+            </div>
+            <% } %>
+
+            <div class="section-bar">
+                <span><%= isLandingPage ? 'Postingan Terbaru' : 'Daftar Artikel' %></span>
+                <a href="<%= BASE_PATH %>/posts">Lihat Semua &raquo;</a>
+            </div>
+
+            <div class="posts-list">
+                <% var displayPosts = isLandingPage ? (posts || []).slice(1, 7) : posts;
+                   if (displayPosts && displayPosts.length > 0) {
+                       displayPosts.forEach(function (post) { %>
+                    <%- include('../../partials/post-card', { post: post, BASE_PATH: BASE_PATH, catColor: catColor }) %>
+                <% }); } else { %>
+                    <div class="empty-note">Belum ada artikel.</div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- UTILITY COLUMN -->
+        <div class="utility-col sticky-col">
+
+            <aside class="sidebox">
+                <div class="sidebox-title">Topik Kategori</div>
+                <div class="sidebox-body">
+                    <% if (categories && categories.length > 0) { %>
+                        <div class="cat-grid" style="grid-template-columns:1fr 1fr;gap:6px;">
+                            <% categories.slice(0, 12).forEach(function (cat) { %>
+                                <a href="<%= BASE_PATH %>/posts/category/<%= cat.slug %>"
+                                   class="cat-tag" style="--cat-color: <%= catColor(cat.name) %>; display:block; text-align:center; margin-bottom:4px;">
+                                    <%= cat.name %>
+                                </a>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <span class="text-secondary">Belum ada kategori.</span>
+                    <% } %>
+                </div>
+            </aside>
+
+            <%
+                var displayTrending = (typeof trendingPosts !== 'undefined' && trendingPosts.length > 0) ? trendingPosts : (posts || []).slice(1, 6);
+                if (displayTrending && displayTrending.length > 0) {
+            %>
+            <aside class="sidebox">
+                <div class="sidebox-title">Postingan Trending</div>
+                <div class="sidebox-body" style="padding:4px 0;">
+                    <ul class="rank-list">
+                        <% displayTrending.forEach(function (post, idx) { %>
+                            <li>
+                                <a href="<%= BASE_PATH %>/posts/<%= post.slug %>" class="rank-item">
+                                    <span class="rank-num"><%= idx + 1 %></span>
+                                    <span>
+                                        <span class="rank-title"><%= post.title %></span><br>
+                                        <span class="rank-meta">
+                                            <% if (post.Category) { %><%= post.Category.name %> | <% } %>
+                                            <%= post.createdAt ? new Date(post.createdAt).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }) : '-' %>
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </aside>
+            <% } %>
+        </div>
     </div>
+
     <%- include('../../partials/footer') %>

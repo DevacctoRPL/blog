@@ -2,17 +2,21 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const users = await queryInterface.sequelize.query('SELECT id FROM "Users" LIMIT 1', { type: Sequelize.QueryTypes.SELECT });
-    const categories = await queryInterface.sequelize.query('SELECT id FROM "Categories" LIMIT 1', { type: Sequelize.QueryTypes.SELECT });
+  async up(queryInterface, Sequelize) {
+    const users = await queryInterface.sequelize.query(
+      'SELECT id FROM "Users" LIMIT 1',
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+    const categories = await queryInterface.sequelize.query(
+      'SELECT id, name FROM "Categories"',
+      { type: Sequelize.QueryTypes.SELECT }
+    );
 
     const userId = users[0].id;
-    const categoryId = categories[0].id;
+    const categoryIds = categories.map(c => c.id);
 
-    await queryInterface.bulkInsert("Posts", [
-      {
-        title: "[Uji Coba Tampilan] Panduan Lengkap Membangun Ekosistem Digital yang Berkelanjutan",
-        content: `# Bab 1: Fondasi Ekonomi Digital
+    const posts = [];
+    const baseContent = `# Bab 1: Fondasi Ekonomi Digital
 Membangun ekosistem bukan sekadar tentang teknologi, tetapi tentang bagaimana nilai diciptakan dan didistribusikan.
 
 ## 1.1 Pentingnya Interoperabilitas
@@ -82,17 +86,33 @@ async function fetchWithTimeout(resource, options = {}) {
 \`\`\`
 
 # Kesimpulan
-Membangun ekosistem adalah perjalanan marathon, bukan sprint. Fokuslah pada nilai jangka panjang.`,
-        slug: "panduan-lengkap-membangun-ekosistem-digital",
+Membangun ekosistem adalah perjalanan marathon, bukan sprint. Fokuslah pada nilai jangka panjang.`;
+
+    for (let i = 1; i <= 15; i++) {
+      const categoryId = categoryIds[i % categoryIds.length];
+      const daysAgo = 15 - i;
+      const createdAt = new Date();
+      createdAt.setDate(createdAt.getDate() - daysAgo);
+
+      posts.push({
+        title: `[Test Post ${i}] Panduan Lengkap Membangun Ekosistem Digital yang Berkelanjutan`,
+        content: baseContent,
+        slug: `test-post-${i}-panduan-ekosistem-digital`,
         UserId: userId,
         CategoryId: categoryId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-    ]);
+        createdAt: createdAt,
+        updatedAt: createdAt,
+      });
+    }
+
+    await queryInterface.bulkInsert('Posts', posts);
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Posts', null, {});
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('Posts', {
+      slug: {
+        [Sequelize.Op.like]: 'test-post-%'
+      }
+    }, {});
   }
 };

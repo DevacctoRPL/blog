@@ -1,124 +1,93 @@
-import express from "express";
+import express, { response } from "express";
 import db from "../../models/index.js";
 import { login } from "../controllers/userController.js";
 import * as postSSRController from "../controllers/postSSRController.js";
+import { auth, destroySession, clearAllSessions } from "../middleware/session.js"
 
 const { Post, Category, User } = db;
 const router = express.Router();
 
-// Landing page
+const catColor = (name) => {
+    if (!name) return '#475569';
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 65%, 45%)`;
+};
+
+router.use((req, res, next) => {
+    res.locals.catColor = catColor;
+    next();
+});
+
 router.get("/", async (req, res) => {
     try {
         const posts = await Post.findAll({
             include: [{ model: Category }, { model: User, attributes: ['username'] }],
             order: [['createdAt', 'DESC']],
+        });
+        const categories = await Category.findAll();
+
+        const trendingLikes = await db.UserLike.findAll({
+            attributes: [
+                'PostId',
+                [db.Sequelize.fn('COUNT', db.Sequelize.col('PostId')), 'likecount']
+            ],
+            include: [{
+                model: Post,
+                include: [{ model: Category }, { model: User, attributes: ['username'] }]
+            }],
+            group: ['PostId', 'Post.id', 'Post->Category.id', 'Post->User.id'],
+            order: [[db.Sequelize.literal('likecount'), 'DESC']],
             limit: 5
         });
-        
-        const categories = await Category.findAll();
-        res.render("pages/public/home", { posts, categories, isLandingPage: true });
+
+        const trendingPosts = trendingLikes.map(tl => tl.Post).filter(Boolean);
+
+        res.render("pages/public/home", { posts, categories, trendingPosts, isLandingPage: true, catColor });
     } catch (err) {
         res.status(500).send("Error loading home page: " + err.message);
     }
 });
 
-router.get("/search", async (req, res) => {
-  const { query } = req.query; // ambil keyword dari query string ?q=...
-  try {
-    const posts = await Post.findAll({
-      where: {
-        title: { [db.Sequelize.Op.iLike]: `%${query}%` }, // case-insensitive search
-      },
-      include: [{ model: Category }, { model: User, attributes: ["username"] }],
-      order: [["createdAt", "DESC"]],
-    });
+router.get("/posts", postSSRController.getAllPosts);
 
-    const categories = await Category.findAll();
-    res.render("pages/public/searchResults", { posts, categories, q: query });
-  } catch (err) {
-    res.status(500).send("Error searching posts: " + err.message);
-  }
-});
-// All Posts page
-router.get("/posts", async (req, res) => {
-    try {
-        const posts = await Post.findAll({
-            include: [{ model: Category }, { model: User, attributes: ['username'] }],
-            order: [['createdAt', 'DESC']]
-        });
-        
-        const categories = await Category.findAll();
-        res.render("pages/public/home", { posts, categories, isLandingPage: false, title: 'Semua Postingan' });
-    } catch (err) {
-        res.status(500).send("Error loading posts page: " + err.message);
-    }
-});
+router.get("/search", postSSRController.searchPosts);
 
-// Categories list page
+router.get("/posts/category/:categorySlug", postSSRController.getPostsByCategory);
+
+router.get("/posts/:slug", postSSRController.getPostBySlug);
+
 router.get("/categories", async (req, res) => {
     try {
         const categories = await Category.findAll();
-        res.render("pages/public/categories", { categories });
+        res.render("pages/public/categories", { categories, catColor });
     } catch (err) {
-        res.status(500).send("Error loading categories page: " + err.message);
+        res.status(500).render("pages/public/404");
     }
 });
 
-router.get("/admin", (req, res) => {
-    res.render("pages/admin/dashboard");
-});
-
-router.get("/login", (req, res) => {
-    res.render("pages/auth/login");
-});
-
-router.get("/posts/:slug", async (req, res) => {
-  const post = await Post.findOne({ where: { slug: req.params.slug } });
-  if (!post) return res.status(404).render("pages/public/404");
-  res.render("pages/public/post-detail", { post });
-});
-
+router.get("/register", (req, res) => res.render("pages/auth/register"));
+router.get("/login", (req, res) => res.render("pages/auth/login"));
 router.post("/login", login);
+router.get("/admin", auth('admin', 'editor'), (req, res) => res.render("pages/admin/dashboard"));
+router.get("/inspect", (req, res) => res.send(req.cookies))
 
-router.get("/", postSSRController.getAllPosts);
-router.get("/:id", postSSRController.getPostById);
-router.get("/category/:categoryId", postSSRController.getPostByCategory);
-router.get("/slug/:slug", postSSRController.getPostBySlug);
-router.get("/posts/:slug", async (req, res) => {
-    try {
-        const post = await Post.findOne({
-            where: { slug: req.params.slug },
-            include: [{ model: Category }, { model: User, attributes: ['username'] }]
-        });
-        
-        if (!post) {
-            return res.status(404).render("pages/public/404");
-        }
-        
-        res.render("pages/public/post-detail", { post });
-    } catch (err) {
-        res.status(500).send("Error loading post: " + err.message);
+router.post("/logout", (req, res) => {
+    const sessionId = req.cookies.session_id;
+    if (sessionId) {
+        destroySession(sessionId);
+        res.clearCookie("session_id", { path: "/" });
     }
+    res.redirect("/blog/login");
 });
 
-router.get("/posts/category/:categorySlug", async (req, res) => {
-    try {
-        const category = await Category.findOne({ where: { slug: req.params.categorySlug } });
-        if (!category) {
-            return res.status(404).render("pages/public/404");
-        }
-        
-        const posts = await Post.findAll({
-            where: { CategoryId: category.id },
-            include: [{ model: Category }, { model: User, attributes: ['username'] }],
-            order: [['createdAt', 'DESC']]
-        });
-        
-        const categories = await Category.findAll();
-        res.render("pages/public/home", { posts, categories, isLandingPage: false });
-    } catch (err) {
-        res.status(500).send("Error loading category page: " + err.message);
-    }
+router.post("/admin/clear-sessions", auth('admin'), (req, res) => {
+    clearAllSessions();
+    res.clearCookie("session_id", { path: "/" });
+    res.json({ message: "All sessions cleared" });
 });
 
 export default router;

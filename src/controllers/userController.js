@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import db from "../../models/index.js";
-import { generateToken } from "../middleware/authMiddleware.js";
+import { createSession } from "../middleware/session.js";
 
 const { User } = db;
 
@@ -22,7 +22,7 @@ export const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role: role || "admin", // default role admin kalau tidak diisi
+      role: role || "authenticated",
     });
 
     res.status(201).json({
@@ -41,21 +41,24 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Cari user berdasarkan email
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ error: "User tidak ditemukan" });
     }
 
-    // Validasi password
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(401).json({ error: "Password salah" });
     }
 
-    // Generate JWT token
-    const token = generateToken(user);
-    res.json({ data: { token } });
+    const sessionId = createSession(user.id);
+    res.cookie("session_id", sessionId, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ data: { success: true } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
